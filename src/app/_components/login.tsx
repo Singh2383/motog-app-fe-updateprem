@@ -1,18 +1,46 @@
-// frontend/src/app/login/page.tsx
-'use client'; // This directive makes this a Client Component
+'use client';
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation'; // For navigation
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { IoCloseCircleOutline } from "react-icons/io5";
+import Image from 'next/image';
+import { useCardRegister } from '../../../hooks/use-card-register';
+import { useCardLogin } from '../../../hooks/use-card-login';
 
-const LoginPage: React.FC = () => {
+const Login: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
+  const show = useCardLogin(state => state.show);
+  const setShowLogin = useCardLogin(state => state.setShow);
+  const setShowRegister = useCardRegister(state => state.setShow);
+
   const router = useRouter();
   const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL;
+
+  console.log("login component, show:", show);
+
+  if (!show) return null;
+
+  const signUp = () => {
+    setShowRegister(true);
+    setShowLogin(false);
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,61 +91,61 @@ const LoginPage: React.FC = () => {
     }
   };
 
+  const close = () => {
+    setShowLogin(false);
+  }
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h1 className="text-2xl font-bold text-center mb-6">Login</h1>
-        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-        {success && <p className="text-green-500 text-center mb-4">{success}</p>}
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2">
-              Email:
-            </label>
-            <input
-              type="email"
-              id="email"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div className="mb-6">
-            <label htmlFor="password" className="block text-gray-700 text-sm font-bold mb-2">
-              Password:
-            </label>
-            <input
-              type="password"
-              id="password"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          <div className="flex items-center justify-between">
-            <button
-              type="submit"
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
-              disabled={loading}
-            >
-              {loading ? 'Logging In...' : 'Login'}
-            </button>
-          </div>
-        </form>
-        <p className="text-center text-gray-600 text-sm mt-4">
-          Don't have an account?{' '}
-          <button
-            onClick={() => router.push('/register')}
-            className="text-blue-500 hover:text-blue-800 font-bold"
-          >
-            Register
-          </button>
-        </p>
+    <div className='w-full max-w-3xl flex fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 border shadow-lg rounded-xl '>
+      <div>
+        <Image src={'/images/login_img.png'} width={500} height={500} alt='login image' className='rounded-l-xl border-l shadow-lg' />
       </div>
+      <Card id='login' className="w-full max-w-sm ml-auto outline-none border-none shadow-none relative">
+        <IoCloseCircleOutline className="absolute -top-1 -right-8 text-neutral-400 text-2xl hover:cursor-pointer hover:text-neutral-800" onClick={close} />
+        <CardHeader>
+          <CardTitle>Login to your account</CardTitle>
+          <CardDescription>
+            Enter your email below to login to your account
+          </CardDescription>
+          <CardAction>
+            <Button variant="link" onClick={signUp}>Sign Up</Button>
+          </CardAction>
+        </CardHeader>
+        <CardContent>
+          <form>
+            <div className="flex flex-col gap-6">
+              <div className="grid gap-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="m@example.com"
+                  required
+                />
+              </div>
+              <div className="grid gap-2">
+                <div className="flex items-center">
+                  <Label htmlFor="password">Password</Label>
+                  <a
+                    href="#"
+                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                  >
+                    Forgot your password?
+                  </a>
+                </div>
+                <Input id="password" type="password" required />
+              </div>
+            </div>
+          </form>
+        </CardContent>
+        <CardFooter className="flex-col gap-2">
+          <Button type="submit" className="w-full" onClick={handleSubmit}>
+            Login
+          </Button>
+        </CardFooter>
+      </Card>
     </div>
   );
-};
+}
 
-export default LoginPage;
+export default Login;
