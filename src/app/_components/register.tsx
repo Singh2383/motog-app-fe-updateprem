@@ -18,6 +18,7 @@ import { useCardLogin } from '../../../hooks/use-card-login';
 import Image from 'next/image';
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { toast } from 'sonner';
+import Link from 'next/link';
 
 const Register: React.FC = () => {
   const [email, setEmail] = useState<string>('');
@@ -81,14 +82,14 @@ const Register: React.FC = () => {
 
   return (
     <div className='w-full max-w-3xl flex fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 border shadow-lg rounded-xl '>
-      <div className='flex-1 relative bg-white'>
+      <div className='hidden sm:block flex-1 relative bg-white'>
         <Image src={'/images/_reg_img.png'} fill alt='login image' className='object-cover rounded-l-xl border-l shadow-lg' />
       </div>
       <Card className="w-full max-w-sm ml-auto outline-none border-none shadow-none relative">
         <IoCloseCircleOutline className="absolute -top-1 -right-8 text-neutral-400 text-2xl hover:cursor-pointer hover:text-neutral-800" onClick={close} />
         <CardHeader>
           <CardTitle>Create your account</CardTitle>
-          <CardDescription>
+          <CardDescription className='hidden sm:block'>
             Enter your email below to create an account
           </CardDescription>
           <CardAction>
@@ -123,6 +124,13 @@ const Register: React.FC = () => {
           <Button type="submit" className="w-full" onClick={handleSubmit}>
             Register
           </Button>
+          <p className='text-xs text-neutral-600'>
+            By proceeding, I confirm that I have received, read, and agree to:{" "}
+            <Link href='/docs/about-us.pdf' className='underline' target='_blank'>About Us</Link>,{" "}
+            <Link href='/docs/privacy-policy.pdf' className='underline' target='_blank'>Privacy Policy</Link>,{" "}
+            <Link href='/docs/refund-policy.pdf' className='underline' target='_blank'>Refund Policy</Link>, and{" "}
+            <Link href='/docs/terms-of-use.pdf' className='underline' target='_blank'>Terms of Use</Link>.
+          </p>
         </CardFooter>
       </Card>
     </div>

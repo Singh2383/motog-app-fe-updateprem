@@ -83,14 +83,14 @@ const Login: React.FC = () => {
 
   return (
     <div className='w-full max-w-3xl flex fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 border shadow-lg rounded-xl'>
-      <div>
+      <div className='hidden sm:block'>
         <Image src={'/images/login_img.png'} width={500} height={500} alt='login image' className='rounded-l-xl border-l shadow-lg' />
       </div>
       <Card id='login' className="w-full max-w-sm ml-auto outline-none border-none shadow-none relative rounded-none rounded-r-xl">
         <IoCloseCircleOutline className="absolute -top-1 -right-8 text-neutral-400 text-2xl hover:cursor-pointer hover:text-neutral-800" onClick={close} />
         <CardHeader>
           <CardTitle>Login to your account</CardTitle>
-          <CardDescription>
+          <CardDescription className='hidden sm:block'>
             Enter your email below to login to your account
           </CardDescription>
           <CardAction>
