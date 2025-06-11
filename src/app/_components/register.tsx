@@ -81,11 +81,11 @@ const Register: React.FC = () => {
   }
 
   return (
-    <div className='w-full max-w-3xl flex fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 border shadow-lg rounded-xl '>
+    <div className='w-full max-w-3xl flex flex-col sm:flex-row fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 border shadow-lg rounded-xl '>
       <div className='hidden sm:block flex-1 relative bg-white'>
         <Image src={'/images/_reg_img.png'} fill alt='login image' className='object-cover rounded-l-xl border-l shadow-lg' />
       </div>
-      <Card className="w-full max-w-sm ml-auto outline-none border-none shadow-none relative">
+      <Card className="w-full max-w-sm ml-auto mr-auto sm:mr-0 outline-none border-none shadow-none relative">
         <IoCloseCircleOutline className="absolute -top-1 -right-8 text-neutral-400 text-2xl hover:cursor-pointer hover:text-neutral-800" onClick={close} />
         <CardHeader>
           <CardTitle>Create your account</CardTitle>

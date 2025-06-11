@@ -1,5 +1,9 @@
-.login-bg {
-    background-image: url("/images/login_img.png");
-    background-size: '60%';
-    background-position: center;
+.show-on-sm {
+    display: none !important;
+}
+
+@media (min-width: 40rem) {
+    .show-on-sm {
+        display: block;
+    }
 }

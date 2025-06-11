@@ -82,49 +82,51 @@ const Login: React.FC = () => {
   }
 
   return (
-    <div className='w-full max-w-3xl flex fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 border shadow-lg rounded-xl'>
-      <div className='hidden sm:block'>
-        <Image src={'/images/login_img.png'} width={500} height={500} alt='login image' className='rounded-l-xl border-l shadow-lg' />
-      </div>
-      <Card id='login' className="w-full max-w-sm ml-auto outline-none border-none shadow-none relative rounded-none rounded-r-xl">
-        <IoCloseCircleOutline className="absolute -top-1 -right-8 text-neutral-400 text-2xl hover:cursor-pointer hover:text-neutral-800" onClick={close} />
-        <CardHeader>
-          <CardTitle>Login to your account</CardTitle>
-          <CardDescription className='hidden sm:block'>
-            Enter your email below to login to your account
-          </CardDescription>
-          <CardAction>
-            <Button variant="link" onClick={signUp}>Sign Up</Button>
-          </CardAction>
-        </CardHeader>
-        <CardContent>
-          <form>
-            <div className="flex flex-col gap-6">
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
+    <div className='w-full max-w-3xl fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 '>
+      <div className='flex flex-col sm:flex-row w-full border shadow-lg rounded-xl'>
+        <div className='hidden sm:block'>
+          <Image src={'/images/login_img.png'} width={500} height={500} alt='login image' className='rounded-l-xl border-l shadow-lg' />
+        </div>
+        <Card id='login' className="w-full max-w-sm ml-auto mr-auto sm:mr-0 outline-none border-none shadow-none relative rounded-none rounded-r-xl">
+          <IoCloseCircleOutline className="absolute -top-1 -right-8 text-neutral-400 text-2xl hover:cursor-pointer hover:text-neutral-800" onClick={close} />
+          <CardHeader>
+            <CardTitle>Login to your account</CardTitle>
+            <CardDescription className='hidden sm:block'>
+              Enter your email below to login to your account
+            </CardDescription>
+            <CardAction>
+              <Button variant="link" onClick={signUp}>Sign Up</Button>
+            </CardAction>
+          </CardHeader>
+          <CardContent>
+            <form>
+              <div className="flex flex-col gap-6">
+                <div className="grid gap-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="m@example.com"
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
                 </div>
-                <Input id="password" type="password" onChange={(e) => setPassword(e.target.value)} required />
+                <div className="grid gap-2">
+                  <div className="flex items-center">
+                    <Label htmlFor="password">Password</Label>
+                  </div>
+                  <Input id="password" type="password" onChange={(e) => setPassword(e.target.value)} required />
+                </div>
               </div>
-            </div>
-          </form>
-        </CardContent>
-        <CardFooter className="flex-col gap-2">
-          <Button type="submit" className="w-full" onClick={handleSubmit}>
-            Login
-          </Button>
-        </CardFooter>
-      </Card>
+            </form>
+          </CardContent>
+          <CardFooter className="flex-col gap-2">
+            <Button type="submit" className="w-full" onClick={handleSubmit}>
+              Login
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
     </div>
   );
 }
