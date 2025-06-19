@@ -2,7 +2,7 @@
 
 import React, { startTransition, useEffect, useState } from 'react';
 import useManualLocation from '@/hooks/use-manual-location';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { getCitySuggestions } from '@/app/actions/getCitySuggestions';
 
@@ -20,7 +20,7 @@ interface IPredictionResult {
     data?: {
         suggestions: IPrediction[];
     };
-    error?: any;
+    error?: string;
 };
 
 const ManualLocation = () => {
@@ -30,8 +30,7 @@ const ManualLocation = () => {
     const [input, setInput] = useState("");
     const [selected, setSelected] = useState<ISuggestion>();
     const [suggestions, setSuggestions] = useState<IPrediction[]>([]);
-    const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
     useEffect(() => {
         if (!input.trim()) {
@@ -41,19 +40,21 @@ const ManualLocation = () => {
 
         const delay = setTimeout(() => {
             startTransition(async () => {
-                const { data, error }: IPredictionResult = await getCitySuggestions(input);
-                if (data) {
-                    console.log("success fetching suggestions: ", data);
-                    setSuggestions(data.suggestions);
+                const result: IPredictionResult = await getCitySuggestions(input);
+                if (result?.data) {
+                    console.log("success fetching suggestions: ", result?.data);
+                    setSuggestions(result?.data.suggestions);
                 } else {
-                    console.log("error fetching suggestions", error);
-                    //setError(error);
+                    console.log("error fetching suggestions", result?.error);
+                    setError(result?.error ?? "");
                 }
             });
         }, 500); //debounce
 
         return () => clearTimeout(delay);
-    }, [input, apiKey]);
+    }, [input, apiKey, error]);
+
+    console.log("selected location", selected);
 
     return (
         <Dialog open={show} onOpenChange={setShow}>
@@ -70,7 +71,8 @@ const ManualLocation = () => {
                                         if (!mainText?.text) return null;
                                         return (
                                             <p key={`${i}_${mainText.text.split(" ").join("")}`}
-                                                className='hover:bg-neutral-200 py-1 px-3 space-x-2'
+                                                className='hover:bg-neutral-200 hover:cursor-pointer py-1 px-3 space-x-2'
+                                                onClick={() => setSelected(placePrediction)}
                                             >
                                                 <span>{mainText.text}</span>
                                                 {secondaryText?.text && <span>({secondaryText.text.split(",")[0]})</span>}

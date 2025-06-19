@@ -22,7 +22,7 @@ export async function getCitySuggestions(input: string) {
         return ({ data: data });
     } catch (err) {
         console.log("error fetching locality suggestions", err);
-        return ({ error: err });
+        return ({ error: err instanceof Error ? err.message : "Failed autocomplete suggestion." });
     }
 }
 
