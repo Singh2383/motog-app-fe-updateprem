@@ -13,8 +13,8 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useCardRegister } from '../../../hooks/use-card-register';
-import { useCardLogin } from '../../../hooks/use-card-login';
+import { useCardRegister } from '../../hooks/use-card-register';
+import { useCardLogin } from '../../hooks/use-card-login';
 import Image from 'next/image';
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { toast } from 'sonner';
