@@ -1,5 +1,7 @@
+'use server'
+
 export async function getCitySuggestions(input: string) {
-    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY;
+    const apiKey = process.env.GOOGLE_MAP_API_KEY;
     const endpoint = 'https://places.googleapis.com/v1/places:autocomplete';
     try {
         const response = await fetch(endpoint, {
@@ -25,5 +27,4 @@ export async function getCitySuggestions(input: string) {
         return ({ error: err instanceof Error ? err.message : "Failed autocomplete suggestion." });
     }
 }
-
 

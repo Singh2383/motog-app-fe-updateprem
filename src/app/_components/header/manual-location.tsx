@@ -5,8 +5,10 @@ import useManualLocation from '@/hooks/use-manual-location';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { getCitySuggestions } from '@/app/actions/getCitySuggestions';
+import useLocation from '@/hooks/use-location';
+import { toast } from 'sonner';
 
-interface ISuggestion {
+export interface ISuggestion {
     structuredFormat: {
         mainText: { text: string };
         secondaryText: { text: string };
@@ -14,23 +16,25 @@ interface ISuggestion {
     placeId: string;
 };
 
-interface IPrediction { placePrediction: ISuggestion };
+export interface IPrediction { placePrediction: ISuggestion };
 
 interface IPredictionResult {
     data?: {
-        suggestions: IPrediction[];
+        suggestions?: IPrediction[];
+        error?: {
+            status: string;
+            code: number;
+        };
     };
     error?: string;
 };
 
 const ManualLocation = () => {
-    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY;
     const show = useManualLocation(state => state.show);
     const setShow = useManualLocation(state => state.setShow);
     const [input, setInput] = useState("");
-    const [selected, setSelected] = useState<ISuggestion>();
     const [suggestions, setSuggestions] = useState<IPrediction[]>([]);
-    const [error, setError] = useState("");
+    const setLocality = useLocation(state => state.setLocality);
 
     useEffect(() => {
         if (!input.trim()) {
@@ -40,31 +44,32 @@ const ManualLocation = () => {
 
         const delay = setTimeout(() => {
             startTransition(async () => {
-                const result: IPredictionResult = await getCitySuggestions(input);
-                if (result?.data) {
-                    console.log("success fetching suggestions: ", result?.data);
-                    setSuggestions(result?.data.suggestions);
+                const { data, error }: IPredictionResult = await getCitySuggestions(input);
+                if (data?.error) {
+                    console.log("error fetching suggestions:", data.error);
+                    toast.error("Oops! Can't find your place!")
+                } else if (data?.suggestions) {
+                    console.log("success fetching suggestions: ", data);
+                    setSuggestions(data.suggestions);
                 } else {
-                    console.log("error fetching suggestions", result?.error);
-                    setError(result?.error ?? "");
+                    console.log("something wrong in fetching suggestions", error);
+                    toast.error("Oops! Something wrong looking up!");
                 }
             });
         }, 500); //debounce
 
         return () => clearTimeout(delay);
-    }, [input, apiKey, error]);
-
-    console.log("selected location", selected);
+    }, [input]);
 
     return (
         <Dialog open={show} onOpenChange={setShow}>
-            <DialogContent className='p-10'>
+            <DialogContent className='p-10' aria-describedby={'manual local entry dialog'}>
                 <DialogHeader>
                     <DialogTitle className='p-4'>We need your city to customize your experience</DialogTitle>
                     <div className='group relative pb-6'>
                         <Input value={input} onChange={(e) => setInput(e.target.value)} placeholder='Type your city, e.g. Jaipur, New Delhi' className='' />
                         {input && suggestions?.length > 0 && (
-                            <div className='hidden group-focus-within:block absolute py-2 shadow-2xl shadow-black rounded-xl w-full bg-white overflow-hidden'>
+                            <div className='absolute py-2 shadow-2xl shadow-black rounded-xl w-full bg-white overflow-hidden'>
                                 {
                                     suggestions.map(({ placePrediction }, i) => {
                                         const { structuredFormat: { mainText, secondaryText } } = placePrediction;
@@ -72,7 +77,7 @@ const ManualLocation = () => {
                                         return (
                                             <p key={`${i}_${mainText.text.split(" ").join("")}`}
                                                 className='hover:bg-neutral-200 hover:cursor-pointer py-1 px-3 space-x-2'
-                                                onClick={() => setSelected(placePrediction)}
+                                                onClick={() => { setLocality(placePrediction); setShow(false); }}
                                             >
                                                 <span>{mainText.text}</span>
                                                 {secondaryText?.text && <span>({secondaryText.text.split(",")[0]})</span>}

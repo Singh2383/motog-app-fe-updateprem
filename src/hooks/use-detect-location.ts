@@ -1,25 +1,14 @@
+import { getReverseGeocode } from "@/app/actions/getReverseGeocode";
 import { useEffect, useState } from "react";
+import useLocation from "./use-location";
 
-const GEOCODING_API = 'https://maps.googleapis.com/maps/api/geocode/json';
+//type LocationStateType = { latitude: null | number, longitude: null | number, location:  };
 
-type LocationStateType = { latitude: null | number, longitude: null | number, city: string };
-
-interface IAddressComponent {
-    long_name: string;
-    short_name: string;
-    types: string[];
-}
-
-interface IReverseGeoCoding {
-    results: {
-        address_components: IAddressComponent[];
-    }[];
-    status: string;
-}
-
-const useDetectLocation = (apiKey: string) => {
-    const [location, setLocation] = useState<LocationStateType>({ latitude: null, longitude: null, city: 'Select City' });
+const useDetectLocation = () => {
+    //const [location, setLocation] = useState<LocationStateType>({ latitude: null, longitude: null, location: 'Select City' });
     const [permissionDenied, setPermissionDenied] = useState(false);
+    const setGeocode = useLocation(state => state.setGeocode);
+    const setLocality = useLocation(state => state.setLocality);
 
     useEffect(() => {
         if (!("geolocation" in navigator)) {
@@ -30,26 +19,13 @@ const useDetectLocation = (apiKey: string) => {
         navigator.geolocation.getCurrentPosition(
             async (position) => {
                 const { latitude, longitude } = position.coords;
+                setGeocode({ lat: latitude, long: longitude });
 
-                try {
-                    const res = await fetch(`${GEOCODING_API}?latlng=${latitude},${longitude}&key=${apiKey}`);
-                    const data: IReverseGeoCoding = await res.json();
-                    console.log("reverse geocode data:", data);
-                    if (data.status === 'OK' && data.results.length > 0) {
-                        const components = data.results[0].address_components;
-                        const city = components.find((c) => c.types.includes('locality'))?.long_name
-                            || components.find((c) => c.types.includes('administrative_area_level_2'))?.long_name
-                            || 'Select City';
-
-                        setLocation({ city, latitude, longitude });
-                    } else throw new Error(data.status);
-                } catch (err) {
-                    console.warn('Reverse geocoding failed:', err);
-                    setLocation({
-                        city: 'New Delhi',
-                        latitude,
-                        longitude,
-                    });
+                const result = await getReverseGeocode(latitude, longitude);
+                console.log("reverse geocode data:", result);
+                if (result?.placeId) {
+                    console.log("setting locality");
+                    setLocality({ placeId: result.placeId, structuredFormat: result.structuredFormat });
                 }
             },
             error => {
@@ -58,9 +34,9 @@ const useDetectLocation = (apiKey: string) => {
             },
             { timeout: 5000 }
         );
-    }, [apiKey]);
+    }, []);
 
-    return { location, permissionDenied };
+    return { permissionDenied };
 }
 
 export default useDetectLocation;

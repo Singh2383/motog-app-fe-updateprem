@@ -11,7 +11,7 @@ const BrandLine = () => {
     return (
         <div className='border-b w-full'>
             <div className='flex justify-between items-center w-10/12 ml-auto mr-auto py-2'>
-                <Link href={"/"} className='w-2/12 max-w-40'><Image alt='brand logo' src={"/images/brand_logo.svg"} className='overflow-hidden' /></Link>
+                <Link href={"/"} className='w-2/12 max-w-40'><Image alt='brand logo' width={500} height={175} src={"/images/brand_logo.svg"} className='overflow-hidden' /></Link>
                 <label className={cn("flex border rounded-3xl focus-within:rounded-t-3xl focus-within:rounded-b-none w-1/2 group relative py-0.5")}>
                     <IoIosSearch className='text-4xl text-neutral-700 w-16' />
                     <input className='w-full outline-0' />
