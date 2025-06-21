@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Login from "./_components/login";
 import Register from "./_components/register";
-import { useCardLogin } from "../../hooks/use-card-login";
+import { useCardLogin } from "../hooks/use-card-login";
 import { Button } from "@/components/ui/button";
 
 export default function Home() {
