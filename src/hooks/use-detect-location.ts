@@ -1,12 +1,9 @@
 import { getReverseGeocode } from "@/app/actions/getReverseGeocode";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import useLocation from "./use-location";
-
-//type LocationStateType = { latitude: null | number, longitude: null | number, location:  };
+import { toast } from "sonner";
 
 const useDetectLocation = () => {
-    //const [location, setLocation] = useState<LocationStateType>({ latitude: null, longitude: null, location: 'Select City' });
-    const [permissionDenied, setPermissionDenied] = useState(false);
     const setGeocode = useLocation(state => state.setGeocode);
     const setLocality = useLocation(state => state.setLocality);
 
@@ -30,13 +27,11 @@ const useDetectLocation = () => {
             },
             error => {
                 console.warn("Location permission denied or failed:", error);
-                setPermissionDenied(true);
+                toast.warning("Please allow location access for better experience.");
             },
             { timeout: 5000 }
         );
-    }, []);
-
-    return { permissionDenied };
+    }, [setGeocode, setLocality]);
 }
 
 export default useDetectLocation;
