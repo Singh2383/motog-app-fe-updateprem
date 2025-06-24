@@ -1,9 +1,7 @@
 import { getReverseGeocode } from "@/app/actions/getReverseGeocode";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import useLocation from "./use-location";
 import { toast } from "sonner";
-
-//type LocationStateType = { latitude: null | number, longitude: null | number, location:  };
 
 const useDetectLocation = () => {
     const setGeocode = useLocation(state => state.setGeocode);
@@ -33,7 +31,7 @@ const useDetectLocation = () => {
             },
             { timeout: 5000 }
         );
-    }, []);
+    }, [setGeocode, setLocality]);
 }
 
 export default useDetectLocation;

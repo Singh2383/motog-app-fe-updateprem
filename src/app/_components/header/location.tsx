@@ -1,10 +1,9 @@
 'use client';
 
-import React, { useCallback } from 'react';
+import React from 'react';
 import { GoTriangleDown } from "react-icons/go";
 import { SlLocationPin } from "react-icons/sl";
 import useDetectLocation from '@/hooks/use-detect-location';
-import { toast } from 'sonner';
 import useManualLocation from '@/hooks/use-manual-location';
 import useLocation from '@/hooks/use-location';
 
