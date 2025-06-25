@@ -13,8 +13,8 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useCardRegister } from '../../hooks/use-card-register';
-import { useCardLogin } from '../../hooks/use-card-login';
+import { useRegisterPopup } from '../../hooks/use-register-popup';
+import { useLoginPopup } from '../../hooks/use-login-popup';
 import Image from 'next/image';
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { toast } from 'sonner';
@@ -25,12 +25,11 @@ const Register: React.FC = () => {
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
 
-  const show = useCardRegister(state => state.show);
-  const setShowRegister = useCardRegister(state => state.setShow);
-  const setShowLogin = useCardLogin(state => state.setShow);
+  const show = useRegisterPopup(state => state.show);
+  const setShowRegister = useRegisterPopup(state => state.setShow);
+  const setShowLogin = useLoginPopup(state => state.setShow);
 
   const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL;
-
 
   if (!show) return null;
 
@@ -81,58 +80,60 @@ const Register: React.FC = () => {
   }
 
   return (
-    <div className='w-full max-w-3xl flex flex-col sm:flex-row fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 border shadow-lg rounded-xl '>
-      <div className='hidden sm:block flex-1 relative bg-white'>
-        <Image src={'/images/_reg_img.png'} fill alt='login image' className='object-cover rounded-l-xl border-l shadow-lg' />
+    <div className='fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4'>
+      <div className='w-full max-w-3xl flex flex-col sm:flex-row fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10'>
+        <div className='hidden sm:block flex-1 relative bg-white rounded-l-3xl'>
+          <Image src={'/images/_reg_img.png'} fill alt='login image' className='object-cover rounded-l-xl shadow-lg' />
+        </div>
+        <Card className="w-full max-w-sm ml-auto mr-auto sm:mr-0 outline-none border-none rounded-l-none shadow-none relative">
+          <IoCloseCircleOutline className="absolute -top-1 -right-8 text-neutral-400 text-2xl hover:cursor-pointer hover:text-neutral-800" onClick={close} />
+          <CardHeader>
+            <CardTitle>Create your account</CardTitle>
+            <CardDescription className='hidden sm:block'>
+              Enter your email below to create an account
+            </CardDescription>
+            <CardAction>
+              <Button variant="link" onClick={login}>Have an account?</Button>
+            </CardAction>
+          </CardHeader>
+          <CardContent>
+            <form>
+              <div className="flex flex-col gap-6">
+                <div className="grid gap-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="m@example.com"
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="reg-password">Password</Label>
+                  <Input id="reg-password" type="password" onChange={(e) => setPassword(e.target.value)} required />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="reg-confirm-password">Confirm Password</Label>
+                  <Input id="reg-confirm-password" type="password" required onChange={(e) => setConfirmPassword(e.target.value)} />
+                </div>
+              </div>
+            </form>
+          </CardContent>
+          <CardFooter className="flex-col gap-2">
+            <Button type="submit" className="w-full" onClick={handleSubmit}>
+              Register
+            </Button>
+            <p className='text-xs text-neutral-600'>
+              By proceeding, I confirm that I have received, read, and agree to:{" "}
+              <Link href='/docs/about-us.pdf' className='underline' target='_blank'>About Us</Link>,{" "}
+              <Link href='/docs/privacy-policy.pdf' className='underline' target='_blank'>Privacy Policy</Link>,{" "}
+              <Link href='/docs/refund-policy.pdf' className='underline' target='_blank'>Refund Policy</Link>, and{" "}
+              <Link href='/docs/terms-of-use.pdf' className='underline' target='_blank'>Terms of Use</Link>.
+            </p>
+          </CardFooter>
+        </Card>
       </div>
-      <Card className="w-full max-w-sm ml-auto mr-auto sm:mr-0 outline-none border-none shadow-none relative">
-        <IoCloseCircleOutline className="absolute -top-1 -right-8 text-neutral-400 text-2xl hover:cursor-pointer hover:text-neutral-800" onClick={close} />
-        <CardHeader>
-          <CardTitle>Create your account</CardTitle>
-          <CardDescription className='hidden sm:block'>
-            Enter your email below to create an account
-          </CardDescription>
-          <CardAction>
-            <Button variant="link" onClick={login}>Have an account?</Button>
-          </CardAction>
-        </CardHeader>
-        <CardContent>
-          <form>
-            <div className="flex flex-col gap-6">
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="reg-password">Password</Label>
-                <Input id="reg-password" type="password" onChange={(e) => setPassword(e.target.value)} required />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="reg-confirm-password">Confirm Password</Label>
-                <Input id="reg-confirm-password" type="password" required onChange={(e) => setConfirmPassword(e.target.value)} />
-              </div>
-            </div>
-          </form>
-        </CardContent>
-        <CardFooter className="flex-col gap-2">
-          <Button type="submit" className="w-full" onClick={handleSubmit}>
-            Register
-          </Button>
-          <p className='text-xs text-neutral-600'>
-            By proceeding, I confirm that I have received, read, and agree to:{" "}
-            <Link href='/docs/about-us.pdf' className='underline' target='_blank'>About Us</Link>,{" "}
-            <Link href='/docs/privacy-policy.pdf' className='underline' target='_blank'>Privacy Policy</Link>,{" "}
-            <Link href='/docs/refund-policy.pdf' className='underline' target='_blank'>Refund Policy</Link>, and{" "}
-            <Link href='/docs/terms-of-use.pdf' className='underline' target='_blank'>Terms of Use</Link>.
-          </p>
-        </CardFooter>
-      </Card>
     </div>
   );
 };

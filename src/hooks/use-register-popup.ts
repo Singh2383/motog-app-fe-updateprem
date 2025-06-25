@@ -2,12 +2,12 @@
 
 import { create } from "zustand";
 
-interface CardRegisterStore {
+interface RegisterPopupStore {
     show: boolean;
     setShow: (b: boolean) => void;
 }
 
-export const useCardRegister = create<CardRegisterStore>(set => ({
+export const useRegisterPopup = create<RegisterPopupStore>(set => ({
     show: false,
     setShow: (b) => set({ show: b }),
 }));
