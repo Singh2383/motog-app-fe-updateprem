@@ -63,15 +63,11 @@ const Login: React.FC = () => {
         const data = await response.json();
         // Store the access token in localStorage (for client-side access)
         setToken(data.access_token);
-        toast.success("Login successful! Redirecting...");
+        toast.success("Login successful");
         console.log('Login successful:', data);
         // Redirect to home page or dashboard
         setTimeout(() => {
           setShowLogin(false);
-          if (searchParams.get("redirect"))
-            router.push(searchParams.get("redirect")!); //redirect to where it has been redirected to login
-          else
-            router.push('/'); // Redirect to the homepage
         }, 1000);
       } else {
         const errorData = await response.json();
