@@ -1,12 +1,11 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { useAuth } from "@/hooks/use-auth";
 import { useListingForms } from "@/hooks/use-listing-forms";
 import axios, { AxiosError } from "axios";
-import { Badge } from "lucide-react";
-import Image from "next/image";
 import { ChangeEvent, startTransition, useRef, useState } from "react";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { toast } from "sonner";
@@ -15,8 +14,14 @@ type PhotoUploadProps = {
     maxImages?: number;
 };
 
+type ImageData = {
+    preview: string;
+    file: File;
+    isPrimary: boolean;
+};
+
 const PhotoUploads = ({ maxImages = 5 }: PhotoUploadProps) => {
-    const [images, setImages] = useState<string[]>([]);
+    const [images, setImages] = useState<ImageData[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const listingId = useListingForms(state => state.listingId);
     const showImageUpload = useListingForms(state => state.showImageUpload);
@@ -25,45 +30,62 @@ const PhotoUploads = ({ maxImages = 5 }: PhotoUploadProps) => {
 
     if (!showImageUpload) return null;
 
-    const handleImageSelection = (e: ChangeEvent<HTMLInputElement>) => {
+    const fileToDataUrl = (file: File): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    };
+
+    const handleImageSelection = async (e: ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) return;
 
         const files = Array.from(e.target.files);
 
-        // Check if total images would exceed max
         if (images.length + files.length > maxImages) {
-            toast.warning(`You can only upload up to ${maxImages} images!`);
+            toast.warning(`You can only upload up to ${maxImages} images`);
             return;
         }
 
-        // Convert images to data URLs for preview
-        const newImages: string[] = [];
-        let loadedCount = 0;
+        try {
+            const newImages = await Promise.all(
+                files.map(async (file, i) => ({
+                    file,
+                    preview: await fileToDataUrl(file),
+                    isPrimary: images.length === 0 && i === 0,// First image becomes primary by default
+                }))
+            );
 
-        files.forEach(file => {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                if (event.target?.result) {
-                    newImages.push(event.target.result as string);
-                    loadedCount++;
+            setImages(prev => [...prev, ...newImages]);
+        } catch (error) {
+            console.error("Error creating previews:", error);
+            alert("Failed to process selected images");
+        }
 
-                    if (loadedCount === files.length) {
-                        const updatedImages = [...images, ...newImages];
-                        setImages(updatedImages);
-                    }
-                }
-            };
-            reader.readAsDataURL(file);
-        });
-
-        // Reset file input
         e.target.value = '';
     };
 
     const removeImage = (index: number) => {
-        const updatedImages = images.filter((_, i) => i !== index);
-        setImages(updatedImages);
+        const newImages = images.filter((_, i) => i !== index);
+        // If we're removing the primary image and there are other images left,
+        // make the first remaining image primary
+        if (images[index].isPrimary && newImages.length > 0) {
+            newImages[0].isPrimary = true;
+        }
+        setImages(newImages);
     };
+
+    const setPrimaryImage = (index: number) => {
+        setImages(prev =>
+            prev.map((img, i) => ({
+                ...img,
+                isPrimary: i === index
+            }))
+        );
+    };
+
 
     const triggerFileInput = () => {
         fileInputRef.current?.click();
@@ -71,10 +93,17 @@ const PhotoUploads = ({ maxImages = 5 }: PhotoUploadProps) => {
 
     const uploadImages = () => {
         startTransition(async () => {
+            const formData = new FormData();
+            images.forEach((image) => {
+                formData.append('files', image.file);
+                // You might want to indicate which image is primary in your upload
+                formData.append(`is_primary_flags`, image.isPrimary.toString());
+            });
+
             try {
                 const res = await axios.post(
                     `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/listings/${listingId}/images`,
-                    images,
+                    formData,
                     { headers: { Authorization: `Bearer ${token}` } }
                 );
                 toast.success("Image upload Succeeded.");
@@ -107,19 +136,44 @@ const PhotoUploads = ({ maxImages = 5 }: PhotoUploadProps) => {
                             <div className="">
                                 <div className="flex flex-wrap gap-3">
                                     {/* Display uploaded thumbnails */}
-                                    {images.map((img, index) => (
-                                        <div key={index} className="relative w-30 h-30 rounded-md overflow-hidden">
-                                            <Image
-                                                src={img}
-                                                alt={`Uploaded ${index}`}
+                                    {images.map((image, index) => (
+                                        <div key={index} className="relative w-30 h-30 rounded-md overflow-hidden group">
+                                            <img
+                                                src={image.preview}
+                                                alt={`Preview ${index}`}
                                                 className="w-full h-full object-cover"
                                             />
+
+                                            {/* Primary star indicator */}
+                                            <button
+                                                onClick={() => setPrimaryImage(index)}
+                                                className={`absolute top-1 left-1 p-1 rounded-full ${image.isPrimary ? 'bg-yellow-400 text-yellow-800' : 'bg-white bg-opacity-70 text-gray-500 hover:bg-opacity-100'}`}
+                                                aria-label={image.isPrimary ? "Primary image" : "Set as primary"}
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    className="h-4 w-4"
+                                                    viewBox="0 0 20 20"
+                                                    fill="currentColor"
+                                                >
+                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                </svg>
+                                            </button>
+
+                                            {/* Remove button */}
                                             <button
                                                 onClick={() => removeImage(index)}
-                                                className="absolute top-1 right-1 bg-black bg-opacity-50 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-opacity-70 transition"
+                                                className="absolute top-1 right-1 bg-black bg-opacity-50 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-opacity-70 transition opacity-0 group-hover:opacity-100"
                                             >
                                                 ×
                                             </button>
+
+                                            {/* Primary image badge */}
+                                            {image.isPrimary && (
+                                                <div className="absolute bottom-1 left-1 right-1 bg-black bg-opacity-50 text-white text-xs text-center py-0.5 rounded">
+                                                    Primary
+                                                </div>
+                                            )}
                                         </div>
                                     ))}
 
@@ -146,7 +200,7 @@ const PhotoUploads = ({ maxImages = 5 }: PhotoUploadProps) => {
                             </div>
                         </CardContent>
                         <CardFooter className="flex-col gap-2">
-                            <Button className="w-full" disabled={!!images.length} onClick={uploadImages}>
+                            <Button className="w-full" disabled={!images.length} onClick={uploadImages}>
                                 Submit
                             </Button>
                         </CardFooter>
