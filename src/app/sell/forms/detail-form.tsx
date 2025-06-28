@@ -60,7 +60,10 @@ export default function DetailForm() {
                 );
                 toast.success("Listing Successfull");
                 console.log("listing res:", res);
-                setTimeout(() => setShowImageUpload(true, res.data.id), 500);
+                setTimeout(() => {
+                    setShowImageUpload(true, res.data.id);
+                    setShowDetailForm(false, "");
+                }, 500);
             } catch (e) {
                 console.error("error listing: ", e);
                 toast.error("Something went wrong!");

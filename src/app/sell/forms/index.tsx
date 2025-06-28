@@ -34,7 +34,10 @@ const ListingForm = () => {
       console.log("verify result: ", result);
       if (result.status === 200) {
         toast.success("Car verified successfully!");
-        setTimeout(() => setShowDetailForm(true, regNum), 300);
+        setTimeout(() => {
+          setShowDetailForm(true, regNum);
+          setRegNum("");
+        }, 300);
         return;
       }
     } catch (err) {
@@ -53,7 +56,7 @@ const ListingForm = () => {
       <div className='w-full max-w-3xl mx-auto bg-white rounded-xl [box-shadow:0_0_10px_rgba(0,0,0,0.3)] py-8 px-32'>
         <h2 className='text-3xl font-bold mb-6'>Enter your car Registration Number</h2>
         <div className='space-y-4 sm:flex sm:space-y-0 sm:space-x-4 items-center max-w-xl'>
-          <Input id='reg-no' onChange={(e) => setRegNum(e.target.value)} className='w-full !text-lg font-semibold py-6' placeholder='Enter your car number' required />
+          <Input id='reg-no' value={regNum} onChange={(e) => setRegNum(e.target.value)} className='w-full !text-lg font-semibold py-6' placeholder='Enter your car number' required />
           <button
             className='max-w-48 w-full bg-sky-600 disabled:bg-neutral-500 text-white py-3 px-6 rounded-lg hover:bg-sky-700 transition-colors'
             onClick={verifyRegNo}
