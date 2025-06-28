@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { redirect, useParams, useRouter, useSearchParams } from 'next/navigation'; // For navigation
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -20,7 +19,6 @@ import { useRegisterPopup } from '../../hooks/use-register-popup';
 import { useLoginPopup } from '../../hooks/use-login-popup';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/use-auth';
-import { Dialog } from '@/components/ui/dialog';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState<string>('');
@@ -31,8 +29,6 @@ const Login: React.FC = () => {
   const setShowLogin = useLoginPopup(state => state.setShow);
   const setShowRegister = useRegisterPopup(state => state.setShow);
 
-  const router = useRouter();
-  const searchParams = useSearchParams();
   const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL;
 
   if (!show) return null;

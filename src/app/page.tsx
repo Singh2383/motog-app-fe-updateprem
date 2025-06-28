@@ -1,8 +1,6 @@
 'use client'
 
 import Image from "next/image";
-import Login from "./_components/login";
-import Register from "./_components/register";
 import { useLoginPopup } from "../hooks/use-login-popup";
 import { Button } from "@/components/ui/button";
 

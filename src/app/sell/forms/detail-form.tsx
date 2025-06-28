@@ -7,10 +7,11 @@ import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/use-auth";
+import { useListingForms } from "@/hooks/use-listing-forms";
 import { cn } from "@/lib/utils";
 import { Label } from "@radix-ui/react-label";
 import axios from "axios";
-import { ChangeEvent, Dispatch, FormEvent, SetStateAction, startTransition, useRef, useState } from "react";
+import { Dispatch, FormEvent, SetStateAction, startTransition, useState } from "react";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { toast } from "sonner";
 
@@ -22,7 +23,6 @@ const steps = [
 
 interface ISellForm {
     vehicle_type: string;
-    reg_no: string;
     kilometers_driven: number;
     price: number;
     city: string;
@@ -30,53 +30,37 @@ interface ISellForm {
     description: string;
 }
 
-export default function DetailForm({ reg_no, setShowDetailForm }: { reg_no: string; setShowDetailForm: Dispatch<SetStateAction<boolean>> }) {
+export default function DetailForm() {
     const token = useAuth(state => state.token);
     const [currentStep, setCurrentStep] = useState(0);
     const [formData, setFormData] = useState<ISellForm>({
         vehicle_type: "car",
-        reg_no,
         kilometers_driven: 0,
         price: 0,
         city: "New Delhi",
         seller_phone: "",
         description: "",
     });
-    const [photoUploads, setPhotoUploads] = useState(false);
-    const [images, setImages] = useState<string[]>([]);
+    const reg_no = useListingForms(state => state.reg_no);
+    const showDetailForm = useListingForms(state => state.showForm);
+    const setShowDetailForm = useListingForms(state => state.setShowForm);
+    const setShowImageUpload = useListingForms(state => state.setShowImageUpload);
+
+    if (!showDetailForm) return null;
 
     const onFormSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         startTransition(async () => {
             console.log("formData:", formData);
             try {
-                // const res = await axios.post(
-                //     `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/listings`,
-                //     formData,
-                //     { headers: { Authorization: `Bearer ${token}` } }
-                // );
+                const res = await axios.post(
+                    `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/listings`,
+                    { ...formData, reg_no },
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
                 toast.success("Listing Successfull");
-                //console.log("listing res:", res);
-                setPhotoUploads(true);
-            } catch (e) {
-                console.error("error listing: ", e);
-                toast.error("Something went wrong!");
-            }
-        });
-    }
-
-    const uploadImages = ()=>{
-        startTransition(async () => {
-            console.log("formData:", formData);
-            try {
-                // const res = await axios.post(
-                //     `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/listings`,
-                //     formData,
-                //     { headers: { Authorization: `Bearer ${token}` } }
-                // );
-                toast.success("Listing Successfull");
-                //console.log("listing res:", res);
-                setPhotoUploads(true);
+                console.log("listing res:", res);
+                setTimeout(() => setShowImageUpload(true, res.data.id), 500);
             } catch (e) {
                 console.error("error listing: ", e);
                 toast.error("Something went wrong!");
@@ -89,10 +73,12 @@ export default function DetailForm({ reg_no, setShowDetailForm }: { reg_no: stri
             <div className='w-full max-w-3xl fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 bg-white rounded-2xl'>
                 <div className='flex flex-col sm:flex-row w-full shadow-lg rounded-xl bg-green-400'>
                     <Card id='listing-car-detail' className="w-full outline-none border-none shadow-none relative">
-                        <IoCloseCircleOutline className="absolute -top-1 -right-8 text-neutral-400 text-2xl hover:cursor-pointer hover:text-neutral-800" onClick={() => setShowDetailForm(false)} />
+                        <IoCloseCircleOutline
+                            className="absolute -top-1 -right-8 text-neutral-400 text-2xl hover:cursor-pointer hover:text-neutral-800"
+                            onClick={() => setShowDetailForm(false, "")} />
                         <CardHeader>
                             <div className="flex space-x-2">
-                                {!photoUploads && steps.map((step, index) => (
+                                {steps.map((step, index) => (
                                     <Badge key={`form-${index}`} variant={currentStep === index ? "default" : "outline"}
                                         onClick={() => index < currentStep && setCurrentStep(index)}
                                         className={cn("", index < currentStep && "hover:bg-neutral-50 hover:cursor-pointer")}
@@ -100,34 +86,23 @@ export default function DetailForm({ reg_no, setShowDetailForm }: { reg_no: stri
                                         {step}
                                     </Badge>
                                 ))}
-                                {photoUploads && <Badge>Upload Photos</Badge>}
                             </div>
                         </CardHeader>
                         <CardContent>
-                            {!photoUploads &&
-                                <form id="sell-car-detail" onSubmit={onFormSubmit}>
-                                    <CarDetail currentStep={currentStep} setFormData={setFormData} />
-                                    <PriceNFeature currentStep={currentStep} setFormData={setFormData} />
-                                    <Contacts currentStep={currentStep} setFormData={setFormData} />
-                                </form>
-                            }
-                            {photoUploads &&
-                                <PhotoUploads images={images} setImages={setImages} />
-                            }
+                            <form id="sell-car-detail" onSubmit={onFormSubmit}>
+                                <CarDetail currentStep={currentStep} setFormData={setFormData} />
+                                <PriceNFeature currentStep={currentStep} setFormData={setFormData} />
+                                <Contacts currentStep={currentStep} setFormData={setFormData} />
+                            </form>
                         </CardContent>
                         <CardFooter className="flex-col gap-2">
-                            {!photoUploads && currentStep < steps.length - 1 &&
+                            {currentStep < steps.length - 1 &&
                                 <Button className="w-full" onClick={() => setCurrentStep(prev => prev + 1)}>
                                     Next
                                 </Button>
                             }
-                            {!photoUploads && currentStep === steps.length - 1 &&
+                            {currentStep === steps.length - 1 &&
                                 <Button type="submit" form="sell-car-detail" className="w-full">
-                                    Submit
-                                </Button>
-                            }
-                            {photoUploads &&
-                                <Button className="w-full" disabled={!!images.length} onClick={uploadImages}>
                                     Submit
                                 </Button>
                             }
@@ -224,101 +199,3 @@ const Contacts = ({ currentStep, setFormData }: { currentStep: number, setFormDa
     )
 }
 
-
-type PhotoUploadProps = {
-    images: string[];
-    setImages: Dispatch<SetStateAction<string[]>>;
-    maxImages?: number;
-    onImagesChange?: (images: string[]) => void;
-};
-
-const PhotoUploads = ({ images, setImages, maxImages = 5 }: PhotoUploadProps) => {
-    const fileInputRef = useRef<HTMLInputElement>(null);
-
-    const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
-        if (!e.target.files) return;
-
-        const files = Array.from(e.target.files);
-
-        // Check if total images would exceed max
-        if (images.length + files.length > maxImages) {
-            toast.warning(`You can only upload up to ${maxImages} images!`);
-            return;
-        }
-
-        // Convert images to data URLs for preview
-        const newImages: string[] = [];
-        let loadedCount = 0;
-
-        files.forEach(file => {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                if (event.target?.result) {
-                    newImages.push(event.target.result as string);
-                    loadedCount++;
-
-                    if (loadedCount === files.length) {
-                        const updatedImages = [...images, ...newImages];
-                        setImages(updatedImages);
-                    }
-                }
-            };
-            reader.readAsDataURL(file);
-        });
-
-        // Reset file input
-        e.target.value = '';
-    };
-
-    const removeImage = (index: number) => {
-        const updatedImages = images.filter((_, i) => i !== index);
-        setImages(updatedImages);
-    };
-
-    const triggerFileInput = () => {
-        fileInputRef.current?.click();
-    };
-
-    return (
-        <div className="">
-            <div className="flex flex-wrap gap-3">
-                {/* Display uploaded thumbnails */}
-                {images.map((img, index) => (
-                    <div key={index} className="relative w-30 h-30 rounded-md overflow-hidden">
-                        <img
-                            src={img}
-                            alt={`Uploaded ${index}`}
-                            className="w-full h-full object-cover"
-                        />
-                        <button
-                            onClick={() => removeImage(index)}
-                            className="absolute top-1 right-1 bg-black bg-opacity-50 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-opacity-70 transition"
-                        >
-                            ×
-                        </button>
-                    </div>
-                ))}
-
-                {/* Display placeholder if we haven't reached max */}
-                {images.length < maxImages && (
-                    <div
-                        className="w-30 h-30 border-2 border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center cursor-pointer hover:border-gray-400 hover:bg-gray-50 transition"
-                        onClick={triggerFileInput}
-                    >
-                        <div className="text-2xl text-gray-500">+</div>
-                        <div className="text-xs text-gray-500 mt-1">Add Image</div>
-                    </div>
-                )}
-            </div>
-
-            <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleImageUpload}
-                accept="image/*"
-                multiple
-                className="hidden"
-            />
-        </div>
-    );
-}

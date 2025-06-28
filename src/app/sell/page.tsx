@@ -4,7 +4,7 @@ import { MdPeopleAlt } from "react-icons/md";
 import { FaThList } from "react-icons/fa";
 import { FaRupeeSign } from "react-icons/fa";
 import { cn } from '@/lib/utils';
-import Form from './form';
+import ListingForm from './forms';
 
 const Sell = () => {
     return (
@@ -28,7 +28,7 @@ const Sell = () => {
             </div>
 
             {/* Form section with smooth transition */}
-            <Form />
+            <ListingForm />
 
             {/* How It Works Section */}
             <section className='py-8 mt-16'>
