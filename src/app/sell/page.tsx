@@ -1,10 +1,10 @@
-import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import React from 'react';
 import { MdPeopleAlt } from "react-icons/md";
 import { FaThList } from "react-icons/fa";
 import { FaRupeeSign } from "react-icons/fa";
 import { cn } from '@/lib/utils';
+import ListingForm from './forms';
 
 const Sell = () => {
     return (
@@ -28,18 +28,7 @@ const Sell = () => {
             </div>
 
             {/* Form section with smooth transition */}
-            <section className='relative z-10 w-full'>
-                <div className='w-full max-w-3xl mx-auto bg-white rounded-xl [box-shadow:0_0_10px_rgba(0,0,0,0.3)] py-8 px-32'>
-                    <h2 className='text-3xl font-bold mb-6'>Enter your car Registration Number</h2>
-                    {/* Your form components here */}
-                    <div className='space-y-4 sm:flex sm:space-y-0 sm:space-x-4 items-center max-w-xl'>
-                        <Input id='reg-no' className='w-full !text-lg font-semibold py-6' placeholder='Enter your car number'/>
-                        <button className='max-w-48 w-full bg-sky-600 text-white py-3 px-6 rounded-lg hover:bg-sky-700 transition-colors'>
-                            Sell My Car
-                        </button>
-                    </div>
-                </div>
-            </section>
+            <ListingForm />
 
             {/* How It Works Section */}
             <section className='py-8 mt-16'>

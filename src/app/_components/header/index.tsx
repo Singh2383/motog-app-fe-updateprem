@@ -3,6 +3,8 @@ import BrandLine from './brand-line';
 import Location from './location';
 import ManualLocation from './manual-location';
 import Navbar from './navbar';
+import Login from '../login';
+import Register from '../register';
 
 const Header = () => {
 
@@ -16,6 +18,8 @@ const Header = () => {
           <ManualLocation />
         </div>
       </div>
+      <Login />
+      <Register />
     </div >
 
   )

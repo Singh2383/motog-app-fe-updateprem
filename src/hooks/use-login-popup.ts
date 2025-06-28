@@ -2,12 +2,12 @@
 
 import { create } from "zustand";
 
-interface CardLoginStore {
+interface LoginPopupStore {
     show: boolean,
     setShow: (b: boolean) => void;
 }
 
-export const useCardLogin = create<CardLoginStore>(set => ({
+export const useLoginPopup = create<LoginPopupStore>(set => ({
     show: false,
     setShow: (b) => set({ show: b }),
 }));
