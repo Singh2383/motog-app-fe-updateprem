@@ -19,7 +19,7 @@ export default function TipsAndAdvicePage() {
 
         {/* BUYER'S SECTION */}
         <h2 className="text-2xl font-semibold mb-4">
-          🚗 BUYER'S TIPS — How to Make a Smart Purchase on MotoG
+          🚗 BUYER&apos;S TIPS — How to Make a Smart Purchase on MotoG
         </h2>
 
         <Separator className="my-8" />
@@ -107,7 +107,7 @@ export default function TipsAndAdvicePage() {
 
         {/* SELLER'S SECTION */}
         <Separator className="my-8" />
-        <h2 className="text-2xl font-semibold mb-4">🚙 SELLER'S TIPS — How to Sell Safely & Smartly on MotoG</h2>
+        <h2 className="text-2xl font-semibold mb-4">🚙 SELLER&apos;S TIPS — How to Sell Safely & Smartly on MotoG</h2>
 
         <Separator className="my-8" />
 
