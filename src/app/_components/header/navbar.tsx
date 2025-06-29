@@ -11,7 +11,7 @@ const Navbar = () => {
     return (
         <nav>
             <Button variant={'link'} className={cn('pl-0', path === "/sell" && "underline")} asChild><Link href={"/sell"}>SELL CAR</Link></Button>
-            <Button variant={'link'} className={cn('', path === "/buy" && "underline")} asChild><Link href={"/buy"}>BUY CAR</Link></Button>
+            <Button variant={'link'} className={cn('', path === "/buy" && "underline")} asChild><Link href={"/inventory"}>BUY CAR</Link></Button>
             <Button variant={'link'} className={cn('', path === "/about-us" && "underline")} asChild><Link href={"/about-us"} className=''>ABOUT US</Link></Button>
             <Button variant={'link'} className={cn('', path === "/tips-n-advices" && "underline")} asChild><Link href={"/tips-n-advices"}>TIPS & ADVICES</Link></Button>
         </nav>

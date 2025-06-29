@@ -1,107 +1,128 @@
 'use client'
 
 import Image from "next/image";
-import { useLoginPopup } from "../hooks/use-login-popup";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import Link from "next/link";
+
+interface ILisiting {
+  vehicle_type: string;
+  reg_no: string;
+  kilometers_driven: number;
+  price: number;
+  usr_inp_city: string;
+  city: string;
+  seller_phone: string;
+  description: string;
+  id: number;
+  user_id: number;
+  is_active: boolean;
+  created_at: string;
+  owner_email: string;
+  rc_details: string;
+  images: string[];
+}
 
 export default function Home() {
-  const setShowLogin = useLoginPopup(state => state.setShow);
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  //const setShowLogin = useLoginPopup(state => state.setShow);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <Button onClick={() => {
-            console.log("clicked login/register btn");
-            setShowLogin(true)
-          }}
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Login / Register
-          </Button>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const { data } = useQuery<ILisiting[]>({
+    queryKey: ["listings"],
+    queryFn: () => axios.get(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/listings`)
+  });
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Hero Section with Custom Backdrop */}
+      <section className="mt-28 sm:mt-20 relative w-full h-[300px] sm:h-[450px] md:h-[500px] lg:h-[600px]">
+        <Image
+          src="/images/hero-background.png"
+          alt="Car marketplace backdrop"
+          fill
+          priority
+          className="object-cover object-center"
+          quality={100}
+        />
+
+        {/* Overlay Content */}
+        <div className="relative z-20 h-full flex flex-col items-center justify-center text-center px-4">
+          <div className="max-w-4xl mx-auto">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-4 drop-shadow-xl">
+              SELL NOW @ EASE
+            </h1>
+            <p className="text-xl sm:text-2xl text-white/90 mb-8 font-medium drop-shadow-md">
+              Free Listing & Buying for Lifetime
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button
+                size="lg"
+                className="bg-blue-600/90 hover:bg-blue-700 text-white px-8 py-6 text-lg font-bold"
+                asChild
+              >
+                <Link href={"/sell"}>
+                  List Your Vehicle
+                </Link>
+              </Button>
+              <Button
+                size="lg"
+                variant="secondary"
+                className="bg-white/90 hover:bg-white text-gray-900 px-8 py-6 text-lg font-bold"
+              >
+                <Link href={"/inventory"}>
+                  Browse Inventory
+                </Link>
+              </Button>
+            </div>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </section>
+
+      {/* Car Listings */}
+      <section className="container mx-au/90to px-4 py-12 sm:py-16">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl sm:text-4xl font-bold mb-2">Featured Vehicles</h2>
+          <p className="text-muted-foreground text-lg">Most popular listings this week</p>
+        </div>
+
+        {data && data.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {data.map((car) => (
+              <Card key={car.id} className="hover:shadow-xl transition-all overflow-hidden group">
+                <div className="relative h-56 sm:h-64">
+                  <Image
+                    src={car.images[0]}
+                    alt={car.images[0]}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+                <CardHeader>
+                  <CardTitle className="text-xl">{car.vehicle_type}</CardTitle>
+                  <div className="flex items-center justify-between">
+                    <span className="text-blue-600 font-semibold text-lg">{car.price}</span>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <Button className="w-full" variant="outline">
+                    View Details
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground text-lg">No vehicles available at the moment</p>
+          </div>
+        )}
+      </section>
     </div>
   );
 }
