@@ -46,45 +46,48 @@ export default function Home() {
           quality={100}
         />
 
-        {/* Overlay Content */}
-        <div className="relative z-20 h-full flex flex-col items-center justify-center text-center px-4">
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-4 drop-shadow-xl">
-              SELL NOW @ EASE
-            </h1>
-            <p className="text-xl sm:text-2xl text-white/90 mb-8 font-medium drop-shadow-md">
-              Free Listing & Buying for Lifetime
-            </p>
+        {/* Card Overlay on Left */}
+        <div className="relative z-20 h-full container mx-auto px-4 flex items-center">
+          <Card className="max-w-md bg-white/90 backdrop-blur-sm border-0 shadow-xl">
+            <CardContent className="p-6 sm:p-8">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+                SELL NOW @ EASE
+              </h1>
+              <p className="text-lg sm:text-xl text-gray-700 mb-8 font-medium">
+                Free Listing & Buying for Lifetime
+              </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                size="lg"
-                className="bg-blue-600/90 hover:bg-blue-700 text-white px-8 py-6 text-lg font-bold"
-                asChild
-              >
-                <Link href={"/sell"}>
-                  List Your Vehicle
-                </Link>
-              </Button>
-              <Button
-                size="lg"
-                variant="secondary"
-                className="bg-white/90 hover:bg-white text-gray-900 px-8 py-6 text-lg font-bold"
-              >
-                <Link href={"/inventory"}>
-                  Browse Inventory
-                </Link>
-              </Button>
-            </div>
-          </div>
+              <div className="flex flex-col gap-4">
+                <Button
+                  size="lg"
+                  className="bg-blue-600 hover:bg-blue-700 text-white py-6 text-lg font-bold"
+                  asChild
+                >
+                  <Link href="/sell">
+                    List Your Vehicle
+                  </Link>
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="bg-white hover:bg-gray-50 text-gray-900 py-6 text-lg font-bold border-gray-300"
+                  asChild
+                >
+                  <Link href="/inventory">
+                    Browse Inventory
+                  </Link>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
       {/* Car Listings */}
-      <section className="container mx-au/90to px-4 py-12 sm:py-16">
+      <section className="container mx-auto px-4 py-12 sm:py-16">
         <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl font-bold mb-2">Featured Vehicles</h2>
-          <p className="text-muted-foreground text-lg">Most popular listings this week</p>
+          <p className="text-muted-foreground text-lg">Latest listings this week</p>
         </div>
 
         {data && data.length > 0 ? (
