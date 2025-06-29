@@ -4,6 +4,8 @@ import "./globals.css";
 import "./styles.css";
 import { Toaster } from "@/components/ui/sonner";
 import Header from "./_components/header";
+import ReactQueryProvider from "./_components/react-query-provider";
+import Footer from "./_components/footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,11 +32,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Header />
-        <main>
-          {children}
-        </main>
-        <Toaster richColors/>
+        <ReactQueryProvider >
+          <Header />
+          <main>
+            {children}
+          </main>
+          <Footer />
+        </ReactQueryProvider>
+        <Toaster richColors />
       </body>
     </html>
   );

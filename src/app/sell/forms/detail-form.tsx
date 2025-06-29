@@ -139,11 +139,12 @@ const CarDetail = ({ currentStep, setFormData }: { currentStep: number, setFormD
             </div>
             <div className="gap-2 sm:flex sm:space-x-4">
                 <div className="flex items-center">
-                    <Label htmlFor="km-driven">Kilometers Driven</Label>
+                    <Label htmlFor="km-driven" className="w-32">Kilometers Driven</Label>
                 </div>
                 <Input id="km-driven"
                     onChange={(e) => setFormData(prev => ({ ...prev, kilometers_driven: parseInt(e.target.value) }))}
                     required
+                    placeholder="How many kilometers have you driven?"
                 />
             </div>
         </div>
@@ -161,6 +162,7 @@ const PriceNFeature = ({ currentStep, setFormData }: { currentStep: number, setF
                 <Input id="price"
                     onChange={(e) => setFormData(prev => ({ ...prev, price: parseInt(e.target.value) }))}
                     required
+                    placeholder="Please enter a selling price."
                 />
 
             </div>
@@ -170,6 +172,7 @@ const PriceNFeature = ({ currentStep, setFormData }: { currentStep: number, setF
                 </div>
                 <Textarea id="desc"
                     onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                    placeholder="Please give a description about the vehicle."
                 />
             </div>
         </div>
@@ -187,6 +190,7 @@ const Contacts = ({ currentStep, setFormData }: { currentStep: number, setFormDa
                 <Input id="city"
                     onChange={(e) => setFormData(prev => ({ ...prev, city: e.target.value }))}
                     required
+                    placeholder="Please enter your city."
                 />
             </div>
             <div className="gap-2 sm:flex sm:space-x-4">
@@ -196,6 +200,7 @@ const Contacts = ({ currentStep, setFormData }: { currentStep: number, setFormDa
                 <Input id="phone"
                     onChange={(e) => setFormData(prev => ({ ...prev, seller_phone: e.target.value }))}
                     required
+                    placeholder="Please enter your contact number."
                 />
             </div>
         </div>

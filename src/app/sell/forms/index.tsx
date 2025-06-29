@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import DetailForm from './detail-form';
 import PhotoUploads from './photo-upload';
 import { useListingForms } from '@/hooks/use-listing-forms';
+import { Button } from '@/components/ui/button';
 
 const ListingForm = () => {
   const baseUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL;
@@ -19,6 +20,11 @@ const ListingForm = () => {
   const setShowDetailForm = useListingForms(state => state.setShowForm);
 
   const verifyRegNo = async () => {
+    if (!regNum) {
+      toast.warning("Please enter a registration number.")
+      return;
+    }
+
     if (!token) {
       console.log("login required");
       showLogin(true);
@@ -57,13 +63,13 @@ const ListingForm = () => {
         <h2 className='text-3xl font-bold mb-6'>Enter your car Registration Number</h2>
         <div className='space-y-4 sm:flex sm:space-y-0 sm:space-x-4 items-center max-w-xl'>
           <Input id='reg-no' value={regNum} onChange={(e) => setRegNum(e.target.value)} className='w-full !text-lg font-semibold py-6' placeholder='Enter your car number' required />
-          <button
-            className='max-w-48 w-full bg-sky-600 disabled:bg-neutral-500 text-white py-3 px-6 rounded-lg hover:bg-sky-700 transition-colors'
+          <Button
+            size="lg"
+            className="bg-blue-600/90 hover:bg-blue-700 text-white px-8 py-6 text-lg font-bold"
             onClick={verifyRegNo}
-            disabled={!regNum}
           >
             Sell My Car
-          </button>
+          </Button>
         </div>
       </div>
       <DetailForm />
