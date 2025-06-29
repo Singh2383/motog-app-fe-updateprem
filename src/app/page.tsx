@@ -1,17 +1,34 @@
 'use client'
 
 import Image from "next/image";
-import { useLoginPopup } from "../hooks/use-login-popup";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import Link from "next/link";
 
-export default function Home() {
-  const setShowLogin = useLoginPopup(state => state.setShow);
+interface ILisiting {
+  vehicle_type: string;
+  reg_no: string;
+  kilometers_driven: number;
+  price: number;
+  usr_inp_city: string;
+  city: string;
+  seller_phone: string;
+  description: string;
+  id: number;
+  user_id: number;
+  is_active: boolean;
+  created_at: string;
+  owner_email: string;
+  rc_details: string;
+  images: string[];
+}
 
-  const { data, isLoading, error } = useQuery({
+export default function Home() {
+  //const setShowLogin = useLoginPopup(state => state.setShow);
+
+  const { data } = useQuery<ILisiting[]>({
     queryKey: ["listings"],
     queryFn: () => axios.get(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/listings`)
   });
@@ -70,41 +87,26 @@ export default function Home() {
           <p className="text-muted-foreground text-lg">Most popular listings this week</p>
         </div>
 
-        {data?.length > 0 ? (
+        {data && data.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {data.map((car) => (
               <Card key={car.id} className="hover:shadow-xl transition-all overflow-hidden group">
                 <div className="relative h-56 sm:h-64">
                   <Image
-                    src={car.image}
-                    alt={car.name}
+                    src={car.images[0]}
+                    alt={car.images[0]}
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 </div>
                 <CardHeader>
-                  <CardTitle className="text-xl">{car.name}</CardTitle>
+                  <CardTitle className="text-xl">{car.vehicle_type}</CardTitle>
                   <div className="flex items-center justify-between">
                     <span className="text-blue-600 font-semibold text-lg">{car.price}</span>
-                    <div className="flex items-center text-sm bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
-                      ★ {car.rating}
-                    </div>
                   </div>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <p className="text-muted-foreground">Mileage</p>
-                      <p className="font-medium">{car.mileage}</p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">Transmission</p>
-                      <p className="font-medium">{car.transmission}</p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">Fuel Type</p>
-                      <p className="font-medium">{car.fuel}</p>
-                    </div>
                   </div>
                 </CardContent>
                 <CardFooter>
