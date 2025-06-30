@@ -1,10 +1,10 @@
-import React from 'react'
-import Home from '../page';
+import { Suspense } from 'react';
+import InventoryPageContent from './_components/page-content';
 
-const Buy = () => {
+export default function InventoryPage() {
     return (
-        <Home />
-    )
+        <Suspense fallback={<p>Loading inventory...</p>}>
+            <InventoryPageContent />
+        </Suspense>
+    );
 }
-
-export default Buy;

@@ -11,15 +11,16 @@ const Footer = () => {
             <div className="container max-w-5/6 mx-auto space-y-8">
                 {/* Top Links */}
                 <div className="w-full mx-auto flex flex-col sm:flex-row flex-wrap justify-center sm:justify-between items-center gap-4 text-sm text-muted-foreground">
-                    <Link href="#">Privacy Policy</Link>
+                    <Link href="/privacy-policy">Privacy Policy</Link>
                     <Link href="/terms-of-use">Terms of Use</Link>
+                    <Link href={"/refund-policy"}>Refund Policy</Link>
                     <Link href="/about-us">About Us</Link>
-                    <Link href="#">Contacts</Link>
-                    <Link href="#">FAQs</Link>
+                    <Link href="/contact-us">Contact Us</Link>
+                    <Link href="/faqs">FAQs</Link>
                 </div>
 
                 {/* Bottom Section */}
-                <div className="w-full mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 text-xs sm:text-sm text-muted-foreground">
+                <div className="w-full mx-auto flex flex-col sm:flex-row justify-around items-center gap-4 text-xs sm:text-sm text-muted-foreground">
                     <p className="text-center sm:text-left">
                         © {new Date().getFullYear()} Wandcorp Private Limited. All rights reserved.
                     </p>
