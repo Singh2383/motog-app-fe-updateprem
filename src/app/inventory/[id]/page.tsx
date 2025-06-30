@@ -43,7 +43,7 @@ export default function CarDetailsPage() {
                 {/* images */}
                 <Carousel className="w-full max-w-4xl mx-auto">
                     <CarouselContent>
-                        {car.images.map(({ url, is_primary }, index: number) => (
+                        {car.images.map(({ url }, index: number) => (
                             <CarouselItem key={index}>
                                 <div className="relative h-64 sm:h-80 md:h-[24rem] rounded-md overflow-hidden shadow">
                                     <Image
