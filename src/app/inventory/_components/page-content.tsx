@@ -39,7 +39,7 @@ export default function InventoryPageContent() {
         maxPrice: priceRange[1],
         verified: verifiedOnly || undefined,
         city: sp?.get("city") ?? "",           // optional extra param
-    }), [brand, fuel, year, transmission, owner, priceRange, verifiedOnly, page, sp?.get("city")]);
+    }), [brand, fuel, year, transmission, owner, priceRange, verifiedOnly, page, sp]);
 
     /** keep URL in sync so users can share & refresh */
     const pushState = () => {

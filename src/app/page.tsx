@@ -34,20 +34,28 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section with Custom Backdrop */}
-      <section className="mt-16 sm:mt-20 relative w-full h-[250px] sm:h-[400px] md:h-[500px] lg:h-[600px]">
+      <section className="mt-28 sm:mt-16 md:mt-28 relative w-full h-[420px] sm:h-[550px] md:h-[520px] lg:h-[450px] xl:h-[600px]">
         <Image
           src="/images/hero-background.png"
           alt="Car marketplace backdrop"
           fill
           priority
-          className="object-cover object-center"
+          className="object-cover object-bottom-right hidden md:inline-block"
+          quality={100}
+        />
+        <Image
+          src="/images/hero-img2.png"
+          alt="Car marketplace backdrop"
+          fill
+          priority
+          className="object-cover object-bottom md:hidden"
           quality={100}
         />
 
         {/* Card Overlay Responsive */}
-        <div className="relative z-20 container mx-auto px-4 flex items-center sm:flex-row sm:gap-8 sm:justify-start sm:h-full sm:pl-8 sm:pr-4 flex-col">
-          <Card className="max-w-md bg-white/90 backdrop-blur-sm border-0 shadow-lg sm:mb-0 mb-6">
-            <CardContent className="p-6 sm:p-8">
+        <div className="relative z-10 container mx-auto px-8 pt-4 lg:pt-[10%]">
+          <Card className="hidden lg:block max-w-sm shadow-lg mb-6 ml-[4%]">
+            <CardContent className="py-6 xl:p-8 text-center">
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">
                 SELL NOW @ EASE
               </h1>
@@ -74,17 +82,34 @@ export default function Home() {
               </div>
             </CardContent>
           </Card>
-        </div>
+          <div className="lg:hidden w-full mx-auto sm:pt-12">
+            <div className="p-6 sm:p-8 text-center">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2 text-nowrap">
+                SELL NOW @ EASE
+              </h1>
+              <p className="text-base sm:text-lg text-white mb-6 font-medium">
+                Free Listing & Buying for Lifetime
+              </p>
 
-        {/* Car Image Overlay */}
-        <div className="absolute bottom-4 right-4 w-32 sm:w-40 md:w-56 lg:w-64">
-          <Image
-            src="/images/featured-car.png"
-            alt="Featured car"
-            width={300}
-            height={200}
-            className="object-contain"
-          />
+              <div className="flex flex-wrap gap-3 justify-center items-center">
+                <Button
+                  size="lg"
+                  className="bg-blue-600 hover:bg-blue-700 text-white py-4 text-base font-bold"
+                  asChild
+                >
+                  <Link href="/sell">List Your Vehicle</Link>
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="bg-white hover:bg-gray-50 text-gray-900 py-4 text-base font-bold border-gray-300"
+                  asChild
+                >
+                  <Link href="/inventory">Browse Inventory</Link>
+                </Button>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

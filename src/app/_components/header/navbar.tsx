@@ -5,7 +5,7 @@ import useDetectLocation from "@/hooks/use-detect-location";
 import useLocation from "@/hooks/use-location";
 import useManualLocation from "@/hooks/use-manual-location";
 import { cn } from "@/lib/utils";
-import { MapPin, User } from "lucide-react";
+import { MapPin } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import LoginBtn from "./login-btn";
