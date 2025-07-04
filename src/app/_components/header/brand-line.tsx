@@ -2,21 +2,34 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { MapPin, Menu, Search, User, X } from "lucide-react";
+import { MapPin, Menu, Search, X } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { Dispatch, FC, KeyboardEvent, SetStateAction, useState } from "react";
 import LoginBtn from "./login-btn";
 import useManualLocation from "@/hooks/use-manual-location";
 import useLocation from "@/hooks/use-location";
+import { useRouter } from "next/navigation";
 
-const BrandLine = ({ isMenuOpen, setIsMenuOpen }) => {
+type BrandLineProps = { isMenuOpen: boolean; setIsMenuOpen: Dispatch<SetStateAction<boolean>> }
+
+const BrandLine: FC<BrandLineProps> = ({ isMenuOpen, setIsMenuOpen }) => {
     const [isSearchFocused, setIsSearchFocused] = useState(false);
     const setShow = useManualLocation(state => state.setShow);
     const locality = useLocation(state => state.locality);
+    const router = useRouter();
+    const [search, setSearch] = useState("");
+
+    const handleSearch = (event: KeyboardEvent<HTMLInputElement>) => {
+        if (event.key !== "Enter" || !search) {
+            return;
+        }
+        router.push(`/inventory?search=${search}`);
+    }
+
     return (
         <div className="border-b">
-            <div className="container mx-auto px-4">
+            <div className="container mx-auto px-4 sm:px-8 md:px-16 lg:px-24">
                 <div className="flex items-center justify-between py-3 md:py-4">
 
                     <Link href={"/"} className='w-4/12 md:w-2/12 max-w-40'>
@@ -37,6 +50,9 @@ const BrandLine = ({ isMenuOpen, setIsMenuOpen }) => {
                                     className="flex-1 px-4 py-3 outline-none rounded-full"
                                     onFocus={() => setIsSearchFocused(true)}
                                     onBlur={() => setIsSearchFocused(false)}
+                                    onKeyDown={handleSearch}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                    value={search}
                                 />
                             </div>
                         </div>
@@ -65,6 +81,9 @@ const BrandLine = ({ isMenuOpen, setIsMenuOpen }) => {
                                 type="text"
                                 placeholder="Search cars..."
                                 className="flex-1 px-3 py-2.5 outline-none rounded-full text-sm"
+                                onKeyDown={handleSearch}
+                                onChange={(e) => setSearch(e.target.value)}
+                                value={search}
                             />
                         </div>
                     </div>
