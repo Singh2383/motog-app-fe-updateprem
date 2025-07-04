@@ -52,9 +52,6 @@ export default function InventoryPageContent() {
         router.replace(url.pathname + '?' + url.searchParams.toString());
     };
 
-    /*------------------------------------------------------------------*/
-    /*   Fetch cars with React Query                                     */
-    /*------------------------------------------------------------------*/
     const { data, isLoading, isError } = useCars(queryParams);
 
     console.log("use cars data:", data);
@@ -94,20 +91,8 @@ export default function InventoryPageContent() {
     );
 
     return (
-        <div className="bg-gray-50 min-h-screen pt-32 px-4 sm:px-6 lg:px-8">
-            <header className="mb-6">
-                <h1 className="text-2xl font-bold">
-                    Used Cars in {(sp?.get("city") ?? '').replace(/-/g, ' ')}
-                    {`(₹${queryParams.minPrice}– ${queryParams.maxPrice} Lakh)`}
-                </h1>
-
-                {/* <p className="text-gray-600 mt-1">
-                    {(data?.total ?? data?.length ?? "###")} cars available
-                </p> */}
-            </header>
-
+        <div className="bg-gray-50 min-h-screen pt-32 px-4 sm:px-6 lg:px-8 mb-4 mt-8">
             <div className="flex gap-6">
-                {/*  ❱❱ Mobile – slide‑in drawer */}
                 <div className="md:hidden">
                     <Sheet>
                         <SheetTrigger className="inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm font-medium shadow-sm">

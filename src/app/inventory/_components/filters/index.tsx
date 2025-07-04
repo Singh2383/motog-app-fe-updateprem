@@ -46,7 +46,7 @@ export default function FiltersSidebar({
     onReset,
 }: FiltersSidebarProps) {
     return (
-        <div className="p-4 space-y-4 w-full max-w-xs overflow-y-auto">
+        <div className="p-4 space-y-4 w-full max-w-xs overflow-y-auto border-1 rounded-xl shadow-xl">
             <BrandFilter brand={brand} setBrand={setBrand} />
             <FuelFilter fuel={fuel} setFuel={setFuel} />
             <YearFilter year={year} setYear={setYear} />

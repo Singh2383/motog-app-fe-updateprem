@@ -4,8 +4,27 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import Link from "next/link";
+import useLocation from "@/hooks/use-location";
+import CarCard from "./inventory/_components/car-card";
+
+type ImageType = {
+  id: string;
+  is_primary: boolean;
+  url: string;
+}
+
+type RcDetailsType = {
+  Type: string;
+  Model: string;
+  reg_date: string;
+  norms_type: string;
+  owner_count: string;
+  vehicle_manufacturer_name: string;
+  vehicle_seat_capacity: string;
+  vehicle_colour: string;
+}
 
 interface ILisiting {
   vehicle_type: string;
@@ -21,15 +40,21 @@ interface ILisiting {
   is_active: boolean;
   created_at: string;
   owner_email: string;
-  rc_details: string;
-  images: string[];
+  rc_details: RcDetailsType;
+  images: ImageType[];
 }
 
 export default function Home() {
-  const { data } = useQuery<ILisiting[]>({
-    queryKey: ["listings"],
-    queryFn: () => axios.get(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/listings`),
+  const location = useLocation(state => state.locality);
+  const { data: featuredCars } = useQuery<AxiosResponse<ILisiting[]>>({
+    queryKey: ["featured-listings", location?.structuredFormat.mainText.text],
+    queryFn: () => axios.get(
+      `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/homepage-listings?city=${location?.structuredFormat.mainText.text ?? 'New Delhi'}`
+    ),
   });
+
+  console.log("data", featuredCars);
+  console.log(featuredCars && featuredCars.data.length > 0);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -117,43 +142,13 @@ export default function Home() {
       <section className="container mx-auto px-4 py-8 sm:py-12">
         <div className="text-center mb-8">
           <h2 className="text-2xl sm:text-3xl font-bold mb-2">Featured Vehicles</h2>
-          <p className="text-muted-foreground text-base">Latest listings this week</p>
+          <p className="text-muted-foreground text-base">Latest listings this week in {location?.structuredFormat.mainText.text ?? 'New Delhi'}</p>
         </div>
 
-        {data && data.length > 0 ? (
+        {featuredCars && featuredCars.data.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {data.map((car) => (
-              <Card
-                key={car.id}
-                className="hover:shadow-xl transition-all overflow-hidden group rounded-lg"
-              >
-                <div className="relative h-40 sm:h-56">
-                  <Image
-                    src={car.images[0]}
-                    alt={car.images[0]}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-                <CardHeader>
-                  <CardTitle className="text-lg font-semibold">{car.vehicle_type}</CardTitle>
-                  <div className="flex items-center justify-between">
-                    <span className="text-blue-600 font-semibold text-base">
-                      ${car.price.toLocaleString()}
-                    </span>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-sm">
-                    <p>{car.city}</p>
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button className="w-full text-sm" variant="outline">
-                    View Details
-                  </Button>
-                </CardFooter>
-              </Card>
+            {featuredCars.data.map((car) => (
+              <CarCard key={car.id} car={car} />
             ))}
           </div>
         ) : (
