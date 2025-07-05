@@ -2,51 +2,17 @@
 
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import axios, { AxiosResponse } from "axios";
 import Link from "next/link";
 import useLocation from "@/hooks/use-location";
 import CarCard from "./inventory/_components/car-card";
-
-type ImageType = {
-  id: string;
-  is_primary: boolean;
-  url: string;
-}
-
-type RcDetailsType = {
-  Type: string;
-  Model: string;
-  reg_date: string;
-  norms_type: string;
-  owner_count: string;
-  vehicle_manufacturer_name: string;
-  vehicle_seat_capacity: string;
-  vehicle_colour: string;
-}
-
-interface ILisiting {
-  vehicle_type: string;
-  reg_no: string;
-  kilometers_driven: number;
-  price: number;
-  usr_inp_city: string;
-  city: string;
-  seller_phone: string;
-  description: string;
-  id: number;
-  user_id: number;
-  is_active: boolean;
-  created_at: string;
-  owner_email: string;
-  rc_details: RcDetailsType;
-  images: ImageType[];
-}
+import { CarDto } from "@/hooks/use-cars";
 
 export default function Home() {
   const location = useLocation(state => state.locality);
-  const { data: featuredCars } = useQuery<AxiosResponse<ILisiting[]>>({
+  const { data: featuredCars } = useQuery<AxiosResponse<CarDto[]>>({
     queryKey: ["featured-listings", location?.structuredFormat.mainText.text],
     queryFn: () => axios.get(
       `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/homepage-listings?city=${location?.structuredFormat.mainText.text ?? 'New Delhi'}`

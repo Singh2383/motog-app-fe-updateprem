@@ -23,7 +23,7 @@ const Navbar: FC<{ isMenuOpen: boolean }> = ({ isMenuOpen }) => {
                     <nav className="flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-1">
                         <Button
                             variant="link"
-                            className={cn("justify-start md:justify-center text-sm font-medium pl-0", path === "/sell" && "underline")}
+                            className={cn("justify-start md:justify-center text-sm font-medium md:pl-0", path === "/sell" && "underline")}
                         >
                             <Link href={"/sell"}>SELL CAR</Link>
                         </Button>
