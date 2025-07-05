@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { RcDetails } from "./use-cars";
-import { Preahvihear } from "next/font/google";
 
 type RcDetailsWithRegNo = RcDetails & { reg_no: string };
 
