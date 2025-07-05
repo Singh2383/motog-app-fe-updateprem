@@ -15,7 +15,7 @@ interface AuthResponse {
 
 interface AuthStore {
   token: AuthResponse | undefined;
-  setToken: (t: AuthResponse) => void;
+  setToken: (t?: AuthResponse) => void;
 }
 
 export const useAuth = create<AuthStore>()(

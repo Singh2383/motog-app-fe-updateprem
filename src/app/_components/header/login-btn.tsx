@@ -14,7 +14,7 @@ const LoginBtn = () => {
 
     if (token) {
         return (
-            <Button variant={'ghost'} className='hover:cursor-pointer flex items-center space-x-2' onClick={() => setToken("")}>
+            <Button variant={'ghost'} className='hover:cursor-pointer flex items-center space-x-2' onClick={() => setToken()}>
                 <IoMdLogOut className='text-lg' />
                 Logout
             </Button>
