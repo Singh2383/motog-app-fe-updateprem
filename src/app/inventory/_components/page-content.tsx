@@ -1,8 +1,6 @@
-// app/used-cars/[city]/page.tsx
 'use client';
 import { useState, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-// import { useCars } from '@/hooks/useCars';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet'; // shadcn
 import { SlidersHorizontal } from 'lucide-react';
 import { useCars } from '@/hooks/use-cars';
@@ -92,7 +90,7 @@ export default function InventoryPageContent() {
 
     return (
         <div className="bg-gray-50 min-h-screen pt-32 px-4 sm:px-6 lg:px-8 mb-4 mt-8">
-            <div className="flex gap-6">
+            <div className="flex flex-col gap-6">
                 <div className="md:hidden">
                     <Sheet>
                         <SheetTrigger className="inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm font-medium shadow-sm">
@@ -108,7 +106,7 @@ export default function InventoryPageContent() {
                 <aside className="hidden md:block w-72 flex-shrink-0">{Filters}</aside>
 
                 {/*  ❱❱ Listing */}
-                <main className="flex-1">
+                <div className="flex-1">
                     {isLoading && <CarsSkeleton />}
                     {isError && <p className="text-red-500">Something went wrong.</p>}
                     {data && (
@@ -123,7 +121,7 @@ export default function InventoryPageContent() {
                             }}
                         />
                     )}
-                </main>
+                </div>
             </div>
         </div>
     );
