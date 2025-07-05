@@ -1,7 +1,7 @@
 'use client';
 import { useState, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet'; // shadcn
+import { Sheet, SheetTrigger, SheetContent, SheetTitle, SheetDescription } from '@/components/ui/sheet'; // shadcn
 import { SlidersHorizontal } from 'lucide-react';
 import { useCars } from '@/hooks/use-cars';
 import FiltersSidebar from './filters';
@@ -90,15 +90,17 @@ export default function InventoryPageContent() {
 
     return (
         <div className="bg-gray-50 min-h-screen pt-32 px-4 sm:px-6 lg:px-8 mb-4 mt-8">
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col md:flex-row gap-6">
                 <div className="md:hidden">
                     <Sheet>
                         <SheetTrigger className="inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm font-medium shadow-sm">
                             <SlidersHorizontal size={16} /> Filters
                         </SheetTrigger>
+                        <SheetTitle className='hidden'>Side Filter Bar - Mobile View</SheetTitle>
                         <SheetContent side="left" className="p-0">
                             {Filters}
                         </SheetContent>
+                        <SheetDescription className='hidden'>This is hidden description of Mobile Side Filter Bar</SheetDescription>
                     </Sheet>
                 </div>
 

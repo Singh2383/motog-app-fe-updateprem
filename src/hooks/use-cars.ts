@@ -1,7 +1,6 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { useAuth } from './use-auth';
 
 // lib/api.ts
 export interface FetchCarsParams {
@@ -35,7 +34,7 @@ export type CarDto = {
     images: ImageData[];
 };
 
-type RcDetails = {
+export type RcDetails = {
     type: string;
     model: string;
     reg_date: string;
@@ -52,20 +51,22 @@ type ImageData = {
     is_primary: boolean;
 };
 
-async function fetchCars(params: FetchCarsParams, token: string): Promise<CarDto[]> {
+async function fetchCars(params: FetchCarsParams): Promise<CarDto[]> {
     const url = new URL(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/listings`);
     Object.entries(params).forEach(([k, v]) => {
         if (v !== undefined && v !== '') url.searchParams.append(k, String(v));
     });
-    const res = await fetch(url.toString(), { next: { revalidate: 60 }, headers: { Authorization: `Bearer ${token}` } });
+    const res = await fetch(url.toString(), {
+        next: { revalidate: 60 }
+    });
+
     if (!res.ok) throw new Error('Failed to fetch');
     return res.json();
 }
 
 export function useCars(params: FetchCarsParams) {
-    const token = useAuth(state => state.token);
     return useQuery({
         queryKey: ['cars', params],
-        queryFn: () => fetchCars(params, token)
+        queryFn: () => fetchCars(params)
     });
 }
