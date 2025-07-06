@@ -16,11 +16,15 @@ type Location = {
     country: string;
 }
 
+let hasRequested = false;
+
 const useDetectLocation = () => {
     const setGeocode = useLocation(state => state.setGeocode);
     const setLocality = useLocation(state => state.setLocality);
 
     useEffect(() => {
+        if (hasRequested) return;
+        hasRequested = true;
         if (!("geolocation" in navigator)) {
             console.warn("Geolocation not supported!");
             return;

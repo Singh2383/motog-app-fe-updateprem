@@ -11,13 +11,34 @@ import { useListingForms } from "@/hooks/use-listing-forms";
 import PhotoUploads from "@/app/sell/forms/photo-upload";
 import { CarDto } from "@/hooks/use-cars";
 
-type UpdateListing = {
+type UpdateListingPayload = Partial<{
     kilometers_driven: number;
     price: number;
     city: string;
     seller_phone: string;
     description: string;
-}
+}>;
+
+type ListingImage = {
+    id: number;
+    url: string;
+    is_primary: boolean;
+};
+
+type ImageData = {
+    preview: string;
+    file?: File;
+    isPrimary: boolean;
+    isExisting?: boolean;
+    id?: string;
+    url: string;
+};
+
+type ExistingImage = {
+    url: string;
+    isPrimary: boolean;
+    id: string;
+};
 
 export default function EditListingForm({ listing }: { listing: CarDto }) {
     const [formData, setFormData] = useState({
@@ -36,11 +57,11 @@ export default function EditListingForm({ listing }: { listing: CarDto }) {
     const showImageUpload = useListingForms(state => state.showImageUpload);
     const uploadForId = useListingForms(state => state.listingId);
 
-    const memoizedImages = useMemo(() => {
-        return listing.images.map((img: any) => ({
+    const memoizedImages = useMemo((): ImageData[] => {
+        return (listing.images as ListingImage[]).map((img) => ({
             url: img.url,
             preview: img.url,
-            id: img.id,
+            id: img.id.toString(), // convert number to string
             isPrimary: img.is_primary,
             isExisting: true,
         }));
@@ -56,7 +77,7 @@ export default function EditListingForm({ listing }: { listing: CarDto }) {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         // Build an object of only changed fields
-        const changedFields: Record<string, any> = {};
+        const changedFields: UpdateListingPayload = {};
         if (formData.kilometers_driven !== listing.kilometers_driven) changedFields.kilometers_driven = formData.kilometers_driven;
         if (formData.price !== listing.price) changedFields.price = formData.price;
         if (formData.description !== (listing.description || '')) changedFields.description = formData.description;
@@ -85,6 +106,32 @@ export default function EditListingForm({ listing }: { listing: CarDto }) {
             toast.error("Failed to update listing.");
         }
     };
+
+    // const handleDeleteListing = async () => {
+    //     const confirmDelete = window.confirm("Are you sure you want to delete this listing? This action cannot be undone.");
+
+    //     if (!confirmDelete) return;
+
+    //     try {
+    //         await axios.delete(
+    //             `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/listings/${listing.id}`,
+    //             {
+    //                 headers: {
+    //                     Authorization: `Bearer ${token?.access_token}`,
+    //                 },
+    //             }
+    //         );
+
+    //         toast.success("Listing deleted successfully!");
+
+    //         // Optional: Redirect to "My Listings" or another page
+    //         window.location.href = "/my-listings";
+    //     } catch (err) {
+    //         console.error("Delete failed:", err);
+    //         toast.error("Failed to delete listing.");
+    //     }
+    // };
+
 
     return (
         <div className="">
@@ -142,11 +189,10 @@ export default function EditListingForm({ listing }: { listing: CarDto }) {
                         Update Images
                     </Button>
                 </div>
-
             </form>
 
             {showImageUpload && uploadForId === String(listing.id) && (
-                <PhotoUploads existingImages={memoizedImages} />
+                <PhotoUploads existingImages={memoizedImages as ExistingImage[]} />
             )}
         </div>
     );

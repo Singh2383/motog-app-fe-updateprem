@@ -202,6 +202,7 @@ const Contacts = ({ currentStep, setFormData }: { currentStep: number, setFormDa
                     <Label htmlFor="phone">Phone</Label>
                 </div>
                 <Input id="phone"
+                    maxLength={10}
                     onChange={(e) => setFormData(prev => ({ ...prev, seller_phone: e.target.value }))}
                     required
                     placeholder="Please enter your contact number."

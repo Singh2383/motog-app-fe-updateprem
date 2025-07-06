@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/carousel";
 import { useParams } from "next/navigation";
 import Image from "next/image";
-import { Phone, MapPin, Mail } from "lucide-react";
+import { Phone, MapPin, Mail, Trash } from "lucide-react";
 import { extractYear } from "../_components/car-card";
 import { toOrdinal } from "@/lib/my-utils";
 import { useAuthStore } from "../../../components/stores/auth-store";
@@ -18,6 +18,9 @@ import { fetchWithAuth } from "@/lib/fetch-with-auth";
 import { CarDto } from "@/hooks/use-cars";
 import { Pencil } from "lucide-react";
 import EditListingForm from "@/app/my-listings/_components/edit-listing-form";
+import { Button } from "@/components/ui/button";
+import axios from "axios";
+import { toast } from "sonner";
 
 const CarDetailsPage: FC = () => {
     const { id } = useParams() as { id?: string };
@@ -26,7 +29,6 @@ const CarDetailsPage: FC = () => {
     const [car, setCar] = useState<CarDto | null>(null);
     const [showContact, setShowContact] = useState(false);
 
-    const isOwner = token?.user.id === car?.user_id;
     const [showEditModal, setShowEditModal] = useState(false);
 
     useEffect(() => {
@@ -45,6 +47,33 @@ const CarDetailsPage: FC = () => {
         );
     }
 
+    const isOwner = token?.user.id === car?.user_id;
+
+    const handleDeleteListing = async () => {
+        const confirmDelete = window.confirm("Are you sure you want to delete this listing? This action cannot be undone.");
+
+        if (!confirmDelete) return;
+
+        try {
+            await axios.delete(
+                `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/listings/${id}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token?.access_token}`,
+                    },
+                }
+            );
+
+            toast.success("Listing deleted successfully!");
+
+            // Optional: Redirect to "My Listings" or another page
+            window.location.href = "/my-listings";
+        } catch (err) {
+            console.error("Delete failed:", err);
+            toast.error("Failed to delete listing.");
+        }
+    };
+
     const rc = car.rc_details ?? {};
     return (
         <div className="min-h-screen w-full overflow-x-hidden bg-white pt-32 md:pt-36 lg:pt-40 pb-16 sm:px-8 md:px-20">
@@ -60,17 +89,28 @@ const CarDetailsPage: FC = () => {
                         </span>
                     </div>
                     {isOwner && (
-                        <div className="bg-blue-50 border border-blue-200 rounded-md p-3 mt-4 inline-block">
+                        <div className="bg-yellow-50 border border-blue-200 rounded-md p-3 mt-4 flex items-center justify-between gap-4">
                             <button
                                 onClick={() => setShowEditModal(true)}
-                                className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-800 transition"
+                                className="inline-flex items-center gap-1 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded-md transition"
                             >
                                 <Pencil size={18} />
                                 <span className="hidden sm:inline">Edit your listing</span>
                             </button>
 
+                            <Button
+                                type="button"
+                                variant="destructive"
+                                onClick={handleDeleteListing}
+                                className="inline-flex items-center gap-1 text-sm"
+                            >
+                                <Trash size={16} />
+                                <span className="hidden sm:inline">Delete Listing</span>
+                            </Button>
+
                         </div>
                     )}
+
                 </header>
 
                 {/* ── Image carousel ─────────────────────────────────────── */}

@@ -9,6 +9,7 @@ import axios, { AxiosError } from "axios";
 import { ChangeEvent, startTransition, useEffect, useRef, useState } from "react";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { toast } from "sonner";
+import { postWithAuth } from "@/lib/post-with-auth";
 
 type PhotoUploadProps = {
     maxImages?: number;
@@ -133,6 +134,7 @@ const PhotoUploads = ({ maxImages = 5, existingImages = [] }: PhotoUploadProps) 
                     toast.success("Image deleted!")
                 }
             } catch (err) {
+                console.log(err)
                 toast.error("Failed to delete image");
                 return;
             }

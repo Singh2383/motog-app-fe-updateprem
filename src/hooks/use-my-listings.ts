@@ -3,10 +3,10 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { RcDetails, CarDto } from './use-cars';
+import { CarDto } from './use-cars';
 import { useAuthStore } from '@/components/stores/auth-store';
 
-async function fetchMyListings(token: any): Promise<CarDto[]> {
+async function fetchMyListings(token: string | undefined): Promise<CarDto[]> {
     const url = new URL(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/listings/my-listings`);
 
     const res = await fetch(url.toString(), {
