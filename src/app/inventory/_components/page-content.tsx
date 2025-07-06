@@ -1,57 +1,69 @@
 'use client';
+
 import { useState, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Sheet, SheetTrigger, SheetContent, SheetTitle, SheetDescription } from '@/components/ui/sheet'; // shadcn
+import { Sheet, SheetTrigger, SheetContent, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { SlidersHorizontal } from 'lucide-react';
-import { useCars } from '@/hooks/use-cars';
+import { useListings } from '@/hooks/use-cars';
 import FiltersSidebar from './filters';
 import CarsListing from './car-listing';
 
-const RESULTS_PER_PAGE = 8;
-
 export default function InventoryPageContent() {
+    const pageSize = Number(process.env.NEXT_PUBLIC_INVENTORY_PAGE_SIZE) || 15;
     const router = useRouter();
     const sp = useSearchParams();
 
-    const [brand, setBrand] = useState(sp.get('brand') || undefined);
-    const [fuel, setFuel] = useState(sp.get('fuel') || undefined);
-    const [year, setYear] = useState(sp.get('year') || undefined);
-    const [transmission, setTransmission] = useState(sp.get('transmission') || undefined);
-    const [owner, setOwner] = useState(sp.get('owner') || undefined);
-    const [priceRange, setPriceRange] = useState<[number, number]>([
-        Number(sp.get('minPrice')) || 1,
-        Number(sp.get('maxPrice')) || 50,
+    const [vehicleType, setVehicleType] = useState<'car' | 'bike' | undefined>(() => {
+        const vt = sp.get('vehicle_type');
+        return vt === 'car' || vt === 'bike' ? vt : undefined;
+    });
+
+    const [city, setCity] = useState<string>(sp.get('city') || '');
+    const [yearRange, setYearRange] = useState<[number | undefined, number | undefined]>([
+        sp.get('min_year') ? Number(sp.get('min_year')) : undefined,
+        sp.get('max_year') ? Number(sp.get('max_year')) : undefined,
     ]);
-    const [verifiedOnly, setVerifiedOnly] = useState(sp.get('verified') === 'true');
-    const [page, setPage] = useState(Number(sp.get('page')) || 1);
+
+    const [priceRange, setPriceRange] = useState<[number | undefined, number | undefined]>([
+        sp.get('min_price') ? Number(sp.get('min_price')) : undefined,
+        sp.get('max_price') ? Number(sp.get('max_price')) : undefined,
+    ]);
+
+    const [kmsRange, setKmsRange] = useState<[number | undefined, number | undefined]>([
+        sp.get('min_km_driven') ? Number(sp.get('min_km_driven')) : undefined,
+        sp.get('max_km_driven') ? Number(sp.get('max_km_driven')) : undefined,
+    ]);
+
+    const [page, setPage] = useState<number>(sp.get('page') ? Number(sp.get('page')) : 1);
 
     const queryParams = useMemo(() => ({
-        skip: (page - 1) * RESULTS_PER_PAGE,
-        limit: RESULTS_PER_PAGE,
-        brand,
-        fuel,
-        year,
-        transmission,
-        owner,
-        minPrice: priceRange[0],
-        maxPrice: priceRange[1],
-        verified: verifiedOnly || undefined,
-        city: sp?.get("city") ?? "",
-        search_q: sp?.get("search_q") ?? "",           // optional extra param
-    }), [brand, fuel, year, transmission, owner, priceRange, verifiedOnly, page, sp]);
+        skip: (page - 1) * pageSize,
+        limit: pageSize,
+        search_q: sp.get('search_q') ?? '',
+        city,
+        vehicle_type: vehicleType,
+        min_price: priceRange[0] ? priceRange[0] * 100000 : undefined,
+        max_price: priceRange[1] ? priceRange[1] * 100000 : undefined,
+        min_year: yearRange[0],
+        max_year: yearRange[1],
+        min_km_driven: kmsRange[0],
+        max_km_driven: kmsRange[1],
+    }), [page, pageSize, vehicleType, city, priceRange, yearRange, kmsRange, sp]);
 
-    /** keep URL in sync so users can share & refresh */
     const pushState = () => {
         const url = new URL(window.location.href);
         Object.entries(queryParams).forEach(([k, v]) => {
-            if (v === undefined || v === '' || (k === 'skip' || k === 'limit')) return;
+            if (v === undefined || v === '') {
+                url.searchParams.delete(k);
+                return;
+            }
             url.searchParams.set(k, String(v));
         });
         url.searchParams.set('page', String(page));
         router.replace(url.pathname + '?' + url.searchParams.toString());
     };
 
-    const { data, isLoading, isError } = useCars(queryParams);
+    const { data, isLoading, isError } = useListings(queryParams);
 
     const handleFilterChange = () => {
         setPage(1);
@@ -59,29 +71,21 @@ export default function InventoryPageContent() {
     };
 
     const resetFilters = () => {
-        setBrand(undefined);
-        setFuel(undefined);
-        setYear(undefined);
-        setTransmission(undefined);
-        setOwner(undefined);
-        setPriceRange([3, 5]);
-        setVerifiedOnly(false);
+        setCity('');
+        setVehicleType(undefined);
+        setYearRange([undefined, undefined]);
+        setPriceRange([undefined, undefined]);
+        setKmsRange([undefined, undefined]);
         setPage(1);
-        router.replace(window.location.pathname); // clear query string
+        router.replace(window.location.pathname); // removes all query params
     };
 
-    /*------------------------------------------------------------------*/
-    /*   Responsive filter sidebar (Sheet on <md, static on ≥md)         */
-    /*------------------------------------------------------------------*/
     const Filters = (
         <FiltersSidebar
-            brand={brand} setBrand={setBrand}
-            fuel={fuel} setFuel={setFuel}
-            year={year} setYear={setYear}
-            transmission={transmission} setTransmission={setTransmission}
-            owner={owner} setOwner={setOwner}
+            yearRange={yearRange} setYearRange={setYearRange}
+            kmsDriven={kmsRange} setKmsDriven={setKmsRange}
             priceRange={priceRange} setPriceRange={setPriceRange}
-            verifiedOnly={verifiedOnly} setVerifiedOnly={setVerifiedOnly}
+            vehicleType={vehicleType} setVehicleType={setVehicleType}
             onFilterChange={handleFilterChange}
             onReset={resetFilters}
         />
@@ -103,19 +107,17 @@ export default function InventoryPageContent() {
                     </Sheet>
                 </div>
 
-                {/*  ❱❱ Desktop sidebar */}
                 <aside className="hidden md:block w-72 flex-shrink-0">{Filters}</aside>
 
-                {/*  ❱❱ Listing */}
                 <div className="flex-1">
                     {isLoading && <CarsSkeleton />}
                     {isError && <p className="text-red-500">Something went wrong.</p>}
                     {data && (
                         <CarsListing
                             cars={data}
-                            totalCars={0}
+                            totalCars={0} // update when backend supports total count
                             currentPage={page}
-                            totalPages={0}
+                            totalPages={10}
                             onPageChange={(p) => {
                                 setPage(p);
                                 pushState();
@@ -128,7 +130,6 @@ export default function InventoryPageContent() {
     );
 }
 
-/* Skeleton loader (optional) */
 function CarsSkeleton() {
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
