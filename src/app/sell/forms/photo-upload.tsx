@@ -3,31 +3,84 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { useAuthStore } from "@/components/stores/auth-store";
 import { useListingForms } from "@/hooks/use-listing-forms";
-import { AxiosError } from "axios";
-import { ChangeEvent, startTransition, useRef, useState } from "react";
+import axios, { AxiosError } from "axios";
+import { ChangeEvent, startTransition, useEffect, useRef, useState } from "react";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { toast } from "sonner";
-import { postWithAuth } from "@/lib/post-with-auth";
 
 type PhotoUploadProps = {
     maxImages?: number;
+    existingImages?: { url: string; isPrimary: boolean; id: string }[];
 };
 
 type ImageData = {
     preview: string;
-    file: File;
+    file?: File;
     isPrimary: boolean;
+    isExisting?: boolean;
+    id?: string; // only for existing
 };
 
-const PhotoUploads = ({ maxImages = 5 }: PhotoUploadProps) => {
+const PhotoUploads = ({ maxImages = 5, existingImages = [] }: PhotoUploadProps) => {
     const [images, setImages] = useState<ImageData[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const listingId = useListingForms(state => state.listingId);
     const showImageUpload = useListingForms(state => state.showImageUpload);
     const setShowImageUpload = useListingForms(state => state.setShowImageUpload);
+    const token = useAuthStore.getState().token?.access_token
+
+    useEffect(() => {
+        if (!existingImages?.length) return;
+
+        const loaded = existingImages.map(img => ({
+            preview: img.url,
+            isPrimary: img.isPrimary,
+            isExisting: true,
+            id: img.id,
+        }));
+
+        setImages(prev => {
+            const same =
+                prev.length === loaded.length &&
+                prev.every((img, idx) =>
+                    img.preview === loaded[idx].preview &&
+                    img.isPrimary === loaded[idx].isPrimary &&
+                    img.id === loaded[idx].id &&
+                    img.isExisting === loaded[idx].isExisting
+                );
+            return same ? prev : loaded;
+        });
+    }, [existingImages]);
+
+
 
     if (!showImageUpload) return null;
+
+    const updatePrimaryImage = async (newPrimaryId: string) => {
+        try {
+            const res = await axios.patch(
+                `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/listings/${listingId}/images/${newPrimaryId}/make-primary`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            if (res.status === 200) {
+                toast.success("Primary image updated");
+            } else {
+                toast.error("Failed to update primary image");
+            }
+        } catch (err) {
+            toast.error("Failed to update primary image");
+            console.error("Update primary error:", err);
+        }
+    };
+
 
     const fileToDataUrl = (file: File): Promise<string> => {
         return new Promise((resolve, reject) => {
@@ -66,11 +119,28 @@ const PhotoUploads = ({ maxImages = 5 }: PhotoUploadProps) => {
         e.target.value = '';
     };
 
-    const removeImage = (index: number) => {
+    const removeImage = async (index: number) => {
+        const image = images[index];
+        if (image.isExisting && image.id) {
+            try {
+                const res = await axios.delete(
+                    `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/listings/images/${image.id}`,
+                    {
+                        headers: { Authorization: `Bearer ${token}` },
+                    }
+                );
+                if (res.status === 204) {
+                    toast.success("Image deleted!")
+                }
+            } catch (err) {
+                toast.error("Failed to delete image");
+                return;
+            }
+        }
         const newImages = images.filter((_, i) => i !== index);
         // If we're removing the primary image and there are other images left,
         // make the first remaining image primary
-        if (images[index].isPrimary && newImages.length > 0) {
+        if (image.isPrimary && newImages.length > 0) {
             newImages[0].isPrimary = true;
         }
         setImages(newImages);
@@ -90,40 +160,61 @@ const PhotoUploads = ({ maxImages = 5 }: PhotoUploadProps) => {
         fileInputRef.current?.click();
     };
 
-    const uploadImages = () => {
-        startTransition(async () => {
-            const formData = new FormData();
-            images.forEach((image) => {
-                formData.append('files', image.file);
-                // You might want to indicate which image is primary in your upload
-                formData.append(`is_primary_flags`, image.isPrimary.toString());
-            });
+    const uploadImages = async() => {
+        const newUploads = images.filter(img => !img.isExisting && img.file);
+        const existingPrimary = existingImages?.find(img => img.isPrimary)?.id;
+        const newPrimary = images.find(img => img.isPrimary && img.isExisting)?.id;
 
+        if (!newUploads.length && existingPrimary !== newPrimary && newPrimary) {
+            await updatePrimaryImage(newPrimary);
+            setTimeout(() => setShowImageUpload(false, ""), 500);
+            return
+        }
+
+        if (!newUploads.length) return;
+
+        const formData = new FormData();
+        newUploads.forEach(image => {
+            formData.append("files", image.file!);
+            formData.append("is_primary_flags", image.isPrimary.toString());
+        });
+
+        startTransition(async () => {
             try {
-                const res = await postWithAuth(`/listings/${listingId}/images`, formData);
-                if (res.status === 200)
-                    toast.success("Image upload Succeeded.");
-                else toast.error("Failed image upload!");
-                setImages([]);
+                const res = await axios.post(
+                    `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/listings/${listingId}/images`,
+                    formData,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            "Content-Type": "multipart/form-data",
+                        },
+                    }
+                );
+                toast.success("Image upload succeeded.");
+                console.log("image upload res:", res);
                 setTimeout(() => setShowImageUpload(false, ""), 500);
             } catch (err) {
                 const e = err as AxiosError;
                 console.error("error image upload:", e);
-                if (e.response && e.response.status === 401)
+                if (e.response?.status === 401) {
                     toast.error("Authentication Failed! Please try logging in again.");
-                else if (e.response && e.response.status >= 400)
+                } else if (e.response?.status && e.response.status >= 400 && e.response.status < 500) {
                     toast.error("Bad Request! Please try again.");
-                else if (e.response && e.response?.status >= 500) toast.error("Something Went Wrong!");
+                } else if (e.response?.status && e.response.status >= 500) {
+                    toast.error("Something went wrong!");
+                }
+
             }
         });
-    }
+    };
 
     return (
         <div className='fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4'>
             <div className='w-full max-w-3xl fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 bg-white rounded-2xl'>
                 <div className='flex flex-col sm:flex-row w-full shadow-lg rounded-xl bg-green-400'>
                     <Card id='listing-car-detail' className="w-full outline-none border-none shadow-none relative">
-                        <IoCloseCircleOutline className="absolute top-1 right-1 text-neutral-400 text-2xl hover:cursor-pointer hover:text-neutral-800" onClick={() => setShowImageUpload(false, "")} />
+                        <IoCloseCircleOutline className="absolute -top-1 -right-8 text-neutral-400 text-2xl hover:cursor-pointer hover:text-neutral-800" onClick={() => setShowImageUpload(false, "")} />
                         <CardHeader>
                             <div className="flex space-x-2">
                                 <Badge>Upload Photos</Badge>
