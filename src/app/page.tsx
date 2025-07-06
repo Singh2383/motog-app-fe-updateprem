@@ -4,18 +4,19 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
-import axios, { AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import Link from "next/link";
 import useLocation from "@/hooks/use-location";
 import CarCard from "./inventory/_components/car-card";
 import { CarDto } from "@/hooks/use-cars";
+import { fetchWithOutAuth } from "@/lib/fetch-without-auth";
 
 export default function Home() {
   const location = useLocation(state => state.locality);
   const { data: featuredCars } = useQuery<AxiosResponse<CarDto[]>>({
     queryKey: ["featured-listings", location?.structuredFormat.mainText.text],
-    queryFn: () => axios.get(
-      `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/homepage-listings?city=${location?.structuredFormat.mainText.text ?? 'New Delhi'}`
+    queryFn: () => fetchWithOutAuth(
+      `/homepage-listings?city=${location?.structuredFormat.mainText.text ?? 'New Delhi'}`
     ),
   });
 

@@ -9,7 +9,8 @@ const VerifyEmailBannerLine: FC = () => {
     const auth = useAuthStore(state => state.token);
 
     if (!auth) return null;
-    if (auth.user.is_email_verified) return null;
+    if (!auth?.user) return null;
+    if (auth.user?.is_email_verified) return null;
 
     const resendEmail = () => {
         axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/resend-verification-email`, { email: auth?.user.email })

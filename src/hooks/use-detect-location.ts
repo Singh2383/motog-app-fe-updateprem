@@ -2,6 +2,7 @@ import { getReverseGeocode } from "@/app/actions/getReverseGeocode";
 import { useEffect, useState } from "react";
 import useLocation from "./use-location";
 import { toast } from "sonner";
+import { postWithoutAuth } from "@/lib/post-without-auth";
 
 const useDetectLocation = () => {
     const [deniedPermission, setDeniedPermission] = useState(false);
@@ -20,7 +21,8 @@ const useDetectLocation = () => {
                 setGeocode({ lat: latitude, long: longitude });
 
                 const result = await getReverseGeocode(latitude, longitude);
-                if (result?.placeId) {
+                //const result = await postWithoutAuth("get-location", {lat: latitude, lng: longitude});
+                if (result.placeId) {
                     setLocality({ placeId: result.placeId, structuredFormat: result.structuredFormat });
                 }
             },
