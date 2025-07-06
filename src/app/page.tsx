@@ -19,9 +19,6 @@ export default function Home() {
     ),
   });
 
-  console.log("data", featuredCars);
-  console.log(featuredCars && featuredCars.data.length > 0);
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section with Custom Backdrop */}
