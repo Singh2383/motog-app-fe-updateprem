@@ -43,7 +43,7 @@ const Navbar: FC<{ isMenuOpen: boolean }> = ({ isMenuOpen }) => {
                         <Button variant="ghost" size="sm" className="hidden md:flex items-center gap-2 justify-start md:justify-center pr-0 mr-0"
                             onClick={() => setShow(true)}>
                             <MapPin className="h-4 w-4" />
-                            <span className=''>{locality?.structuredFormat.mainText.text ?? 'Select Location'}</span>
+                            <span className=''>{locality?.mainText ?? 'Select Location'}</span>
                         </Button>
 
                         <div className="md:hidden">

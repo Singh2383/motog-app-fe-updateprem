@@ -2,39 +2,37 @@
 
 import React, { startTransition, useEffect, useState } from 'react';
 import useManualLocation from '@/hooks/use-manual-location';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { getCitySuggestions } from '@/app/actions/getCitySuggestions';
 import useLocation from '@/hooks/use-location';
 import { toast } from 'sonner';
+import { postWithoutAuth } from '@/lib/post-without-auth';
 
-export interface ISuggestion {
-    structuredFormat: {
-        mainText: { text: string };
-        secondaryText: { text: string };
-    };
-    placeId: string;
+export interface ILocation {
+    mainText: string;
+    secondaryText: string;
+    placeId?: string;
+    country?: string;
 };
 
-export interface IPrediction { placePrediction: ISuggestion };
+interface ISuggestion {
+    suggestions: ILocation[];
+}
 
-interface IPredictionResult {
-    data?: {
-        suggestions?: IPrediction[];
-        error?: {
-            status: string;
-            code: number;
-        };
-    };
-    error?: string;
-};
+type GetSuggestionParam = {
+    addrStr: string;
+    sessionToken: string;
+    latLng: string; //"28.5079920,77.2025578"
+}
 
 const ManualLocation = () => {
     const show = useManualLocation(state => state.show);
     const setShow = useManualLocation(state => state.setShow);
     const [input, setInput] = useState("");
-    const [suggestions, setSuggestions] = useState<IPrediction[]>([]);
+    const [suggestions, setSuggestions] = useState<ILocation[]>([]);
     const setLocality = useLocation(state => state.setLocality);
+
+    const { sessionToken, geocode } = useLocation();
 
     useEffect(() => {
         if (!input.trim()) {
@@ -44,21 +42,17 @@ const ManualLocation = () => {
 
         const delay = setTimeout(() => {
             startTransition(async () => {
-                const { data, error }: IPredictionResult = await getCitySuggestions(input);
-                console.error("prediction error:", error);
-                if (data) {
-                    if (data.error) {
-                        console.error("error fetching suggestions:", data.error);
-                        toast.error("Oops! Can't find your place!");
-                    } else {
-                        setSuggestions(data.suggestions ?? []);
-                    }
-                } else {
-                    console.error("something wrong in fetching suggestions", error);
+                try {
+                    const { data } = await postWithoutAuth<GetSuggestionParam, ISuggestion>("loc-autocomplete",
+                        { addrStr: input, latLng: `${geocode?.lat},${geocode?.lng}`, sessionToken });
+                    console.log("autocomplete suggestions", data);
+                    setSuggestions(data.suggestions ?? []);
+                } catch (err) {
+                    console.error("something wrong in fetching suggestions", err);
                     toast.error("Oops! Something wrong looking up!");
                 }
             });
-        }, 500); //debounce
+        }, 300); //debounce
 
         return () => clearTimeout(delay);
     }, [input]);
@@ -73,16 +67,14 @@ const ManualLocation = () => {
                         {input && suggestions?.length > 0 && (
                             <div className='absolute py-2 shadow-2xl shadow-black rounded-xl w-full bg-white overflow-hidden'>
                                 {
-                                    suggestions.map(({ placePrediction }, i) => {
-                                        const { structuredFormat: { mainText, secondaryText } } = placePrediction;
-                                        if (!mainText?.text) return null;
+                                    suggestions.map(({ mainText, secondaryText, country }, i) => {
                                         return (
-                                            <p key={`${i}_${mainText.text.split(" ").join("")}`}
+                                            <p key={`${i}_${mainText.split(" ").join("")}`}
                                                 className='hover:bg-neutral-200 hover:cursor-pointer py-1 px-3 space-x-2'
-                                                onClick={() => { setLocality(placePrediction); setShow(false); }}
+                                                onClick={() => { setLocality({ mainText, secondaryText, country }); setShow(false); }}
                                             >
-                                                <span>{mainText.text}</span>
-                                                {secondaryText?.text && <span>({secondaryText.text.split(",")[0]})</span>}
+                                                <span>{mainText}</span>
+                                                {secondaryText && <span>({secondaryText.split(",")[0]})</span>}
                                             </p>
                                         );
                                     })
@@ -91,6 +83,7 @@ const ManualLocation = () => {
                         )}
                     </div>
                 </DialogHeader>
+                <DialogDescription className='hidden'>This is a hidden description for manual location input dialog.</DialogDescription>
             </DialogContent>
         </Dialog>
     )
