@@ -100,6 +100,8 @@ const PhotoUploads = ({ maxImages = 5 }: PhotoUploadProps) => {
             });
 
             try {
+                console.log("formData.files", formData.getAll("files"));
+                console.log("formData.is_primary_flags", formData.getAll("is_primary_flags"));
                 const res = await postWithAuth(`/listings/${listingId}/images`, formData);
                 if (res.status === 200)
                     toast.success("Image upload Succeeded.");
