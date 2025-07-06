@@ -64,7 +64,7 @@ async function fetchCars(params: FetchCarsParams): Promise<CarDto[]> {
     return res.json();
 }
 
-export function useCars(params: FetchCarsParams) {
+export function useListings(params: FetchCarsParams) {
     return useQuery({
         queryKey: ['cars', params],
         queryFn: () => fetchCars(params)
