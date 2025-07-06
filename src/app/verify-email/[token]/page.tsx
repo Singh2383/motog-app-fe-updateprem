@@ -42,7 +42,7 @@ const VerifyEmail = () => {
                 toast.error("Something Went Wrong!");
                 console.error("failed email verification:", err);
             })
-    })
+    }, [token, setLoading, auth]);
 
     return (
         <div className="min-h-screen flex justify-center items-center">
