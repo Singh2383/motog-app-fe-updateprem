@@ -6,11 +6,9 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
-import { useAuthStore } from "../../../components/stores/auth-store";
 import { useListingForms } from "@/hooks/use-listing-forms";
 import { cn } from "@/lib/utils";
 import { Label } from "@radix-ui/react-label";
-import axios from "axios";
 import { Dispatch, FormEvent, SetStateAction, startTransition, useState } from "react";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { toast } from "sonner";
@@ -32,7 +30,6 @@ interface ISellForm {
 }
 
 export default function DetailForm() {
-    const token = useAuthStore(state => state.token);
     const [currentStep, setCurrentStep] = useState(0);
     const [formData, setFormData] = useState<ISellForm>({
         vehicle_type: "car",
@@ -52,7 +49,6 @@ export default function DetailForm() {
     const onFormSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         startTransition(async () => {
-            console.log("formData:", formData);
             try {
                 //backup in case the postwithAuth fails
                 // const res = await axios.post(
@@ -62,7 +58,7 @@ export default function DetailForm() {
                 // );
                 const res = await postWithAuth("/listings", { ...formData, reg_no });
                 toast.success("Listing Successfull");
-                console.log("listing res:", res);
+                
                 setTimeout(() => {
                     setShowImageUpload(true, res.data.id);
                     setShowDetailForm(false, "");

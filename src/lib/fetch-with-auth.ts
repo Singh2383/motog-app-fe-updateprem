@@ -1,5 +1,5 @@
 import { useAuthStore } from "@/components/stores/auth-store";
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 
 export async function fetchWithAuth<TResponse>(path: string) {
     const token = useAuthStore.getState().token;

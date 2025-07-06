@@ -12,8 +12,6 @@ const LocationPin = () => {
     useDetectLocation();
     const locality = useLocation(state => state.locality);
 
-    console.log("locality", locality);
-
     return (
         <div className='flex space-x-1 items-center text-neutral-500 hover:cursor-pointer' onClick={() => setShow(true)}>
             <MapPin className='text-lg font-extrabold' />

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -17,18 +17,14 @@ import { IoCloseCircleOutline } from "react-icons/io5";
 import Image from 'next/image';
 import { toast } from 'sonner';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import axios from 'axios';
 import { postWithoutAuth } from '@/lib/post-without-auth';
 
-const ForgotPassword: React.FC = () => {
+const ForgotPasswordContent: React.FC = () => {
     const sp = useSearchParams();
     const router = useRouter();
     const path = usePathname();
 
     const [email, setEmail] = useState<string>('');
-
-    const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL;
-    console.log("auth-state=", sp.get("auth-state"));
 
     if (!sp.get("auth-state") || sp.get("auth-state") !== "forgot-password") return null;
 
@@ -43,7 +39,7 @@ const ForgotPassword: React.FC = () => {
                 }
                 toast.info("Please check your email for password reset link.");
                 router.replace("/");
-            }).catch(err => toast.error("Something went wrong! Please try again."));
+            }).catch(err => toast.error("Something went wrong! Please try again.", err));
     };
 
     return (
@@ -90,6 +86,14 @@ const ForgotPassword: React.FC = () => {
             </div>
         </div>
     );
+}
+
+const ForgotPassword = () => {
+    return (
+        <Suspense fallback={<div className='min-h-screen flex justify-center items-center'><span>Loading...</span></div>}>
+            <ForgotPasswordContent />
+        </Suspense>
+    )
 }
 
 export default ForgotPassword;

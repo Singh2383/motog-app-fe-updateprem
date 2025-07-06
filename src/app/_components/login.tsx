@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -19,7 +19,7 @@ import { toast } from 'sonner';
 import { useAuthStore } from '../../components/stores/auth-store';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-const Login: React.FC = () => {
+const LoginContent: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const router = useRouter();
@@ -54,7 +54,6 @@ const Login: React.FC = () => {
         // Store the access token in localStorage (for client-side access)
         setToken(data);
         toast.success("Login successful");
-        console.log('Login successful:', data);
         // Redirect to home page or dashboard
         router.replace(path);
       } else {
@@ -119,6 +118,14 @@ const Login: React.FC = () => {
       </div>
     </div>
   );
+}
+
+const Login = () => {
+  return (
+    <Suspense fallback={<div className='min-h-screen flex justify-center items-center'><span>Loading...</span></div>}>
+      <LoginContent />
+    </Suspense>
+  )
 }
 
 export default Login;

@@ -8,8 +8,6 @@ import axios from "axios";
 const VerifyEmailBannerLine: FC = () => {
     const auth = useAuthStore(state => state.token);
 
-    console.log("auth:", auth);
-
     if (!auth) return null;
     if (auth.user.is_email_verified) return null;
 

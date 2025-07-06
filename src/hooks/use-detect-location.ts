@@ -20,9 +20,7 @@ const useDetectLocation = () => {
                 setGeocode({ lat: latitude, long: longitude });
 
                 const result = await getReverseGeocode(latitude, longitude);
-                console.log("reverse geocode data:", result);
                 if (result?.placeId) {
-                    console.log("setting locality");
                     setLocality({ placeId: result.placeId, structuredFormat: result.structuredFormat });
                 }
             },

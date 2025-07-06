@@ -27,8 +27,6 @@ const PasswordReset: React.FC = () => {
     const path = usePathname();
     const { token } = useParams();
 
-    const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL;
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -55,7 +53,7 @@ const PasswordReset: React.FC = () => {
                 toast.error('Rest failed. Please try again.');
             }
         } catch (err) {
-            console.log('Network error during registration:', err);
+            console.error('Network error during registration:', err);
             toast.error('Something Went Wrong!');
         }
     };

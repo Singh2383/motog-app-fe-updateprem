@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -16,11 +16,10 @@ import { Label } from "@/components/ui/label";
 import Image from 'next/image';
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { toast } from 'sonner';
-import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { postWithAuth } from '@/lib/post-with-auth';
 
-const Register: React.FC = () => {
+const RegisterContent: React.FC = () => {
     const [oldPassword, setOldPassword] = useState<string>('');
     const [newPassword, setNewPassword] = useState<string>('');
     const [confirmNewPassword, setConfirmNewPassword] = useState<string>('');
@@ -28,8 +27,6 @@ const Register: React.FC = () => {
     const router = useRouter();
     const path = usePathname();
     const sp = useSearchParams();
-
-    const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL;
 
     if (!sp.get("auth-state") || sp.get("auth-state") !== "change-password") return null;
 
@@ -54,8 +51,8 @@ const Register: React.FC = () => {
                 toast.error('Password change failed!');
             }
         } catch (err) {
-            console.log('Network error during registration:', err);
             toast.error('Something Went Wrong!');
+            console.error("Submit error in change password:", err);
         }
     };
 
@@ -104,5 +101,13 @@ const Register: React.FC = () => {
         </div>
     );
 };
+
+const Register = () => {
+    return (
+        <Suspense fallback={<div className='min-h-screen flex justify-center items-center'><span>Loading...</span></div>}>
+            <RegisterContent />
+        </Suspense>
+    )
+}
 
 export default Register;

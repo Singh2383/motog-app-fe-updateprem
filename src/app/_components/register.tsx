@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -19,7 +19,7 @@ import { toast } from 'sonner';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-const Register: React.FC = () => {
+const RegisterContent: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
@@ -50,18 +50,16 @@ const Register: React.FC = () => {
       });
 
       if (response.ok) {
-        const data = await response.json();
         toast.success("Registration successful! Please check your Inbox");
-        console.log('Registration successful:', data);
         // Optionally, redirect to login page after a short delay
         router.replace(path);
       } else {
         const errorData = await response.json();
         toast.error('Registration failed. Please try again.');
-        console.log('Registration failed:', errorData);
+        console.error('Registration failed:', errorData);
       }
     } catch (err) {
-      console.log('Network error during registration:', err);
+      console.error('Network error during registration:', err);
       toast.error('Network error. Could not connect to the server.');
     }
   };
@@ -73,14 +71,14 @@ const Register: React.FC = () => {
           <Image src={'/images/_reg_img.png'} fill alt='login image' className='object-cover rounded-l-xl shadow-lg' />
         </div>
         <Card id='login' className="w-full max-w-sm ml-auto mr-auto sm:mr-0 outline-none border-none shadow-none relative rounded-r-xl rounded-l-xl sm:rounded-l-none">
-          <IoCloseCircleOutline className="absolute top-1 right-1 text-neutral-400 text-2xl hover:cursor-pointer hover:text-neutral-800" onClick={()=>router.replace(path)} />
+          <IoCloseCircleOutline className="absolute top-1 right-1 text-neutral-400 text-2xl hover:cursor-pointer hover:text-neutral-800" onClick={() => router.replace(path)} />
           <CardHeader>
             <CardTitle>Create your account</CardTitle>
             <CardDescription className='hidden sm:block'>
               Enter your email below to create an account
             </CardDescription>
             <CardAction>
-              <Button variant="link" onClick={()=>router.replace(`${path}?auth-state=login`)}>Have an account?</Button>
+              <Button variant="link" onClick={() => router.replace(`${path}?auth-state=login`)}>Have an account?</Button>
             </CardAction>
           </CardHeader>
           <CardContent>
@@ -124,5 +122,13 @@ const Register: React.FC = () => {
     </div>
   );
 };
+
+const Register = () => {
+  return (
+    <Suspense fallback={<div className='min-h-screen flex justify-center items-center'><span>Loading...</span></div>}>
+      <RegisterContent />
+    </Suspense>
+  )
+}
 
 export default Register;

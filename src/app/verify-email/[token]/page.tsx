@@ -28,7 +28,7 @@ const VerifyEmail = () => {
             }).catch(err => {
                 setLoading(false);
                 toast.error("Something Went Wrong!");
-                console.log("failed email verification:", err);
+                console.error("failed email verification:", err);
             })
     })
 

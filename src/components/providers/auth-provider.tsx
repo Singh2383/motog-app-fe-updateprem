@@ -18,7 +18,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         if (!token?.access_token && !PUBLIC_ROUTES.includes(pathname)) {
             router.push(`${pathname}?auth-state=login`);
         }
-    }, [hasHydrated, pathname, token]);
+    }, [hasHydrated, pathname, token, router]);
 
     return <>{children}</>;
 }

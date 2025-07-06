@@ -3,9 +3,8 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { useAuthStore } from "../../../components/stores/auth-store";
 import { useListingForms } from "@/hooks/use-listing-forms";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import { ChangeEvent, startTransition, useRef, useState } from "react";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { toast } from "sonner";
@@ -27,7 +26,6 @@ const PhotoUploads = ({ maxImages = 5 }: PhotoUploadProps) => {
     const listingId = useListingForms(state => state.listingId);
     const showImageUpload = useListingForms(state => state.showImageUpload);
     const setShowImageUpload = useListingForms(state => state.setShowImageUpload);
-    const token = useAuthStore(state => state.token);
 
     if (!showImageUpload) return null;
 
@@ -109,8 +107,9 @@ const PhotoUploads = ({ maxImages = 5 }: PhotoUploadProps) => {
                 //     { headers: { Authorization: `Bearer ${token?.access_token}` } }
                 // );
                 const res = await postWithAuth(`/listings/${listingId}/images`, formData);
-                toast.success("Image upload Succeeded.");
-                console.log("image upload res:", res);
+                if (res.status === 200)
+                    toast.success("Image upload Succeeded.");
+                else toast.error("Failed image upload!");
                 setImages([]);
                 setTimeout(() => setShowImageUpload(false, ""), 500);
             } catch (err) {

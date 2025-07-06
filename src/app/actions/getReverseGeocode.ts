@@ -53,7 +53,7 @@ export async function getReverseGeocode(latitude: number, longitude: number) {
             }
         }
     } catch (err) {
-        console.log("failed reverse geocoding", err);
+        console.error("failed reverse geocoding", err);
         return ({ error: { status: err instanceof Error ? err.message : "Failed reverse geocode", code: 500 } });
     }
 }

@@ -27,7 +27,6 @@ const SellCarVerification = () => {
     }
 
     if (!token) {
-      console.log("login required");
       showLogin(true);
       return;
     }
@@ -38,7 +37,6 @@ const SellCarVerification = () => {
         { reg_no: regNum }, { headers: { Authorization: `Bearer ${token.access_token}` } }
       );
 
-      console.log("verify result: ", result);
       if (result.status === 200) {
         toast.success("Car verified successfully!");
         setTimeout(() => {

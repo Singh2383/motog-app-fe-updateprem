@@ -52,8 +52,6 @@ export default function InventoryPageContent() {
 
     const { data, isLoading, isError } = useCars(queryParams);
 
-    console.log("use cars data:", data);
-
     const handleFilterChange = () => {
         setPage(1);
         pushState();
