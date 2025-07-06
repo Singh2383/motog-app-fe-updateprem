@@ -15,7 +15,7 @@ const LocationPin = () => {
 
     useEffect(() => {
         generateSessionToken();
-    }, []);
+    }, [generateSessionToken]);
 
     return (
         <div className='flex space-x-1 items-center text-neutral-500 hover:cursor-pointer' onClick={() => setShow(true)}>

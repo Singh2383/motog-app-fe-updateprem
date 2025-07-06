@@ -55,7 +55,7 @@ const ManualLocation = () => {
         }, 300); //debounce
 
         return () => clearTimeout(delay);
-    }, [input]);
+    }, [input, geocode, sessionToken]);
 
     return (
         <Dialog open={show} onOpenChange={setShow}>
