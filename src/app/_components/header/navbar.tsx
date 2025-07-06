@@ -11,7 +11,7 @@ import { usePathname } from "next/navigation";
 import LoginBtn from "./login-btn";
 import { Dispatch, FC, SetStateAction } from "react";
 
-const Navbar: FC<{ isMenuOpen: boolean, setMenuOpen: Dispatch<SetStateAction<boolean>> }> = ({ isMenuOpen, setMenuOpen }) => {
+const Navbar: FC<{ isMenuOpen: boolean, setMenuOpen: Dispatch<SetStateAction<boolean>> }> = ({ isMenuOpen }) => {
     const path = usePathname();
     useDetectLocation();
     const setShow = useManualLocation(state => state.setShow);
