@@ -1,24 +1,24 @@
 'use client';
 
-import { useAuthStore } from '@/app/stores/auth-store';
+import { useAuthStore } from '@/components/stores/auth-store';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 const PUBLIC_ROUTES = ['/', "/inventory", "/sell", "/about-us", "/contact-us", "/faqs", "/privacy-policy", "/refund-policy",
-    "/terms-of-use",
-    "/tips-n-advices"
+    "/terms-of-use", "/tips-n-advices", "/reset-password", "/verify-email",
 ];
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
-    const { token } = useAuthStore();
+    const { token, hasHydrated } = useAuthStore();
     const router = useRouter();
     const pathname = usePathname();
 
     useEffect(() => {
+        if (!hasHydrated) return;
         if (!token?.access_token && !PUBLIC_ROUTES.includes(pathname)) {
-            router.push('/login');
+            router.push(`${pathname}?auth-state=login`);
         }
-    }, [, pathname]);
+    }, [hasHydrated, pathname, token]);
 
     return <>{children}</>;
 }

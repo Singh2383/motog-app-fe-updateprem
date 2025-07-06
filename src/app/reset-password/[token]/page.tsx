@@ -25,7 +25,7 @@ const PasswordReset: React.FC = () => {
 
     const router = useRouter();
     const path = usePathname();
-    const {token} = useParams();
+    const { token } = useParams();
 
     const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL;
 
@@ -38,15 +38,15 @@ const PasswordReset: React.FC = () => {
         }
 
         try {
-            const response = await postWithoutAuth("/reset-password")
+            const response = await postWithoutAuth("/reset-password", { token, new_password: password });
 
-            fetch(`${BACKEND_API_URL}/register`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ token, new_password: password }),
-            });
+            // fetch(`${BACKEND_API_URL}/register`, {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            //     body: JSON.stringify({ token, new_password: password }),
+            // });
 
             if (response.status === 200) {
                 toast.success("Password reset successful.");

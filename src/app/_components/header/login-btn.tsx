@@ -3,7 +3,7 @@
 import React from 'react';
 import { VscAccount } from "react-icons/vsc";
 import { IoMdLogOut } from "react-icons/io";
-import { useAuthStore } from '../../stores/auth-store';
+import { useAuthStore } from '../../../components/stores/auth-store';
 import { Button } from '@/components/ui/button';
 import { usePathname, useRouter } from 'next/navigation';
 

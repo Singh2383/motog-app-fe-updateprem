@@ -18,6 +18,7 @@ import Image from 'next/image';
 import { toast } from 'sonner';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import axios from 'axios';
+import { postWithoutAuth } from '@/lib/post-without-auth';
 
 const ForgotPassword: React.FC = () => {
     const sp = useSearchParams();
@@ -33,14 +34,15 @@ const ForgotPassword: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        axios.post(`${BACKEND_API_URL}/forgot-password`, { email })
+        postWithoutAuth(`/forgot-password`, { email })
             .then(res => {
                 if (res.status !== 200) {
                     toast.error("Something went wrong! Please try again.");
+                    router.replace("/");
                     return;
                 }
                 toast.info("Please check your email for password reset link.");
-                close();
+                router.replace("/");
             }).catch(err => toast.error("Something went wrong! Please try again."));
     };
 

@@ -1,17 +1,18 @@
-// hooks/useRequireAuth.ts
 'use client';
 
 import { useEffect } from 'react';
-import { useAuthStore } from '@/app/stores/auth-store';
-import { useLoginPopup } from './use-login-popup';
+import { useAuthStore } from '@/components/stores/auth-store';
+import { usePathname, useRouter } from 'next/navigation';
 
 export function useRequireAuth() {
     const { token } = useAuthStore();
-    const setShow = useLoginPopup(state => state.setShow);
+    const router = useRouter();
+    const path = usePathname();
 
     useEffect(() => {
         if (!token) {
-            setShow(true);
+            console.log("token in require auth", token);
+            router.replace(`${path}?auth-state=login`);
         }
     }, [token]);
 }

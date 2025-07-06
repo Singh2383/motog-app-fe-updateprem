@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { FC } from "react";
-import { useAuthStore } from "@/app/stores/auth-store";
+import { useAuthStore } from "@/components/stores/auth-store";
 import axios from "axios";
 
 const VerifyEmailBannerLine: FC = () => {

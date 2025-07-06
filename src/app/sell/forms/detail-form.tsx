@@ -6,7 +6,7 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
-import { useAuthStore } from "../../stores/auth-store";
+import { useAuthStore } from "../../../components/stores/auth-store";
 import { useListingForms } from "@/hooks/use-listing-forms";
 import { cn } from "@/lib/utils";
 import { Label } from "@radix-ui/react-label";
@@ -14,6 +14,7 @@ import axios from "axios";
 import { Dispatch, FormEvent, SetStateAction, startTransition, useState } from "react";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { toast } from "sonner";
+import { postWithAuth } from "@/lib/post-with-auth";
 
 const steps = [
     "Car Details",
@@ -53,11 +54,13 @@ export default function DetailForm() {
         startTransition(async () => {
             console.log("formData:", formData);
             try {
-                const res = await axios.post(
-                    `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/listings`,
-                    { ...formData, reg_no },
-                    { headers: { Authorization: `Bearer ${token}` } }
-                );
+                //backup in case the postwithAuth fails
+                // const res = await axios.post(
+                //     `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/listings`,
+                //     { ...formData, reg_no },
+                //     { headers: { Authorization: `Bearer ${token?.access_token}` } }
+                // );
+                const res = await postWithAuth("/listings", { ...formData, reg_no });
                 toast.success("Listing Successfull");
                 console.log("listing res:", res);
                 setTimeout(() => {

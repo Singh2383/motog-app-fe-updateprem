@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import axios, { AxiosError } from 'axios';
 import React, { useState } from 'react';
 
-import { useAuthStore } from '../../stores/auth-store';
+import { useAuthStore } from '../../../components/stores/auth-store';
 import { useLoginPopup } from '@/hooks/use-login-popup';
 import { toast } from 'sonner';
 import DetailForm from './detail-form';

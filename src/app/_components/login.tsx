@@ -16,7 +16,7 @@ import { Label } from "@/components/ui/label";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import Image from 'next/image';
 import { toast } from 'sonner';
-import { useAuthStore } from '../stores/auth-store';
+import { useAuthStore } from '../../components/stores/auth-store';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 const Login: React.FC = () => {

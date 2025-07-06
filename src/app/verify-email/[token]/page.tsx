@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuthStore } from '@/components/stores/auth-store';
 import { fetchWithOutAuth } from '@/lib/fetch-without-auth';
 import { useParams, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
@@ -9,6 +10,7 @@ const VerifyEmail = () => {
     const [loading, setLoading] = useState(true);
     const router = useRouter();
     const { token } = useParams();
+    const auth = useAuthStore();
 
     useEffect(() => {
         fetchWithOutAuth(`verify-email?token=${token}`)
@@ -16,6 +18,9 @@ const VerifyEmail = () => {
                 setLoading(false);
                 if (res.status == 200) {
                     toast.success("Email verification succeeded");
+                    if (auth.token?.access_token) {
+                        auth.setToken({ access_token: auth.token?.access_token, token_type: auth.token?.token_type, user: res.data });
+                    }
                     setTimeout(() => {
                         router.replace("/");
                     }, 200);
