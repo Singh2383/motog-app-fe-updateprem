@@ -2,7 +2,6 @@ import { getReverseGeocode } from "@/app/actions/getReverseGeocode";
 import { useEffect, useState } from "react";
 import useLocation from "./use-location";
 import { toast } from "sonner";
-import { postWithoutAuth } from "@/lib/post-without-auth";
 
 const useDetectLocation = () => {
     const [deniedPermission, setDeniedPermission] = useState(false);
