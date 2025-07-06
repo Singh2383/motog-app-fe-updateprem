@@ -19,7 +19,7 @@ import { toast } from 'sonner';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { postWithAuth } from '@/lib/post-with-auth';
 
-const RegisterContent: React.FC = () => {
+const ChangePasswordContent: React.FC = () => {
     const [oldPassword, setOldPassword] = useState<string>('');
     const [newPassword, setNewPassword] = useState<string>('');
     const [confirmNewPassword, setConfirmNewPassword] = useState<string>('');
@@ -102,12 +102,12 @@ const RegisterContent: React.FC = () => {
     );
 };
 
-const Register = () => {
+const ChangePassword = () => {
     return (
         <Suspense fallback={<div className='min-h-screen flex justify-center items-center'><span>Loading...</span></div>}>
-            <RegisterContent />
+            <ChangePasswordContent />
         </Suspense>
     )
 }
 
-export default Register;
+export default ChangePassword;
