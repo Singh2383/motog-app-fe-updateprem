@@ -181,18 +181,11 @@ const PhotoUploads = ({ maxImages = 5, existingImages = [] }: PhotoUploadProps) 
 
         startTransition(async () => {
             try {
-                const res = await axios.post(
-                    `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/listings/${listingId}/images`,
-                    formData,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                            "Content-Type": "multipart/form-data",
-                        },
-                    }
-                );
-                toast.success("Image upload succeeded.");
-                console.log("image upload res:", res);
+                const res = await postWithAuth(`/listings/${listingId}/images`, formData);
+                if (res.status === 200)
+                    toast.success("Image upload Succeeded.");
+                else toast.error("Failed image upload!");
+                setImages([]);
                 setTimeout(() => setShowImageUpload(false, ""), 500);
             } catch (err) {
                 const e = err as AxiosError;

@@ -1,22 +1,17 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { MapPin, Menu, Search, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { Dispatch, FC, KeyboardEvent, SetStateAction, useState } from "react";
 import LoginBtn from "./login-btn";
-import useManualLocation from "@/hooks/use-manual-location";
-import useLocation from "@/hooks/use-location";
 import { useRouter } from "next/navigation";
+import DesktopSearchBar from "./desktop-search-bar";
+import MobileSearchBar from "./mobile-search-bar";
 
 type BrandLineProps = { isMenuOpen: boolean; setIsMenuOpen: Dispatch<SetStateAction<boolean>> }
 
 const BrandLine: FC<BrandLineProps> = ({ isMenuOpen, setIsMenuOpen }) => {
-    const [isSearchFocused, setIsSearchFocused] = useState(false);
-    const setShow = useManualLocation(state => state.setShow);
-    const locality = useLocation(state => state.locality);
     const router = useRouter();
     const [search, setSearch] = useState("");
 
@@ -37,26 +32,8 @@ const BrandLine: FC<BrandLineProps> = ({ isMenuOpen, setIsMenuOpen }) => {
                     </Link>
 
                     {/* Desktop Search Bar */}
-                    <div className="hidden md:flex flex-1 max-w-2xl mx-8">
-                        <div className="relative w-full group">
-                            <div className={cn(
-                                "flex items-center border rounded-full transition-all duration-200",
-                                isSearchFocused ? "border-gray-500 shadow-lg" : "border-gray-300"
-                            )}>
-                                <Search className="ml-4 h-5 w-5 text-gray-400" />
-                                <input
-                                    type="text"
-                                    placeholder="Search cars, brands, models..."
-                                    className="flex-1 px-4 py-3 outline-none rounded-full"
-                                    onFocus={() => setIsSearchFocused(true)}
-                                    onBlur={() => setIsSearchFocused(false)}
-                                    onKeyDown={handleSearch}
-                                    onChange={(e) => setSearch(e.target.value)}
-                                    value={search}
-                                />
-                            </div>
-                        </div>
-                    </div>
+                    <DesktopSearchBar handleSearch={handleSearch} search={search} setSearch={setSearch} />
+
 
                     {/* Desktop Login Button */}
                     <div className="hidden md:block">
@@ -73,28 +50,9 @@ const BrandLine: FC<BrandLineProps> = ({ isMenuOpen, setIsMenuOpen }) => {
                 </div>
 
                 {/* Mobile Search Bar */}
-                <div className="flex md:hidden pb-3">
-                    <div className="relative w-full">
-                        <div className="flex items-center border border-gray-300 focus-within:border-gray-500 rounded-full">
-                            <Search className="ml-3 h-5 w-5 text-gray-400" />
-                            <input
-                                type="text"
-                                placeholder="Search cars..."
-                                className="flex-1 px-3 py-2.5 outline-none rounded-full text-sm"
-                                onKeyDown={handleSearch}
-                                onChange={(e) => setSearch(e.target.value)}
-                                value={search}
-                            />
-                        </div>
-                    </div>
-                    <Button variant="ghost" size="sm" className="flex md:hidden items-center gap-2 justify-start md:justify-center"
-                        onClick={() => setShow(true)}>
-                        <MapPin className="h-4 w-4" />
-                        <span className=''>{locality?.mainText ?? 'Select Location'}</span>
-                    </Button>
-                </div>
+                <MobileSearchBar handleSearch={handleSearch} search={search} setSearch={setSearch} />
             </div>
-        </div>
+        </div >
     )
 }
 

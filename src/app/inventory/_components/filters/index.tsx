@@ -1,50 +1,41 @@
 'use client';
-import BrandFilter from './brand-filter';
-import FuelFilter from './fuel-filter';
-import YearFilter from './year-filter';
-import OwnerFilter from './owner-filter';
+
+import YearFilter from './year-range-filter';
 import PriceRangeFilter from './price-range-filter';
+import KmsDrivenFilter from './kms-driven-filter';
+import VehicleTypeFilter from './vehicle-type-filter';
 
 export interface FiltersSidebarProps {
-    brand?: string;
-    setBrand: (v?: string) => void;
-    fuel?: string;
-    setFuel: (v?: string) => void;
-    year?: string;
-    setYear: (v?: string) => void;
-    transmission?: string;
-    setTransmission: (v?: string) => void;
-    owner?: string;
-    setOwner: (v?: string) => void;
-    priceRange: [number, number];
-    setPriceRange: (v: [number, number]) => void;
-    verifiedOnly: boolean;
-    setVerifiedOnly: (v: boolean) => void;
+    vehicleType?: 'car' | 'bike';
+    setVehicleType: (v?: 'car' | 'bike') => void;
+    yearRange: [number | undefined, number | undefined];
+    setYearRange: (v: [number | undefined, number | undefined]) => void;
+    priceRange: [number | undefined, number | undefined];
+    setPriceRange: (v: [number | undefined, number | undefined]) => void;
+    kmsDriven: [number | undefined, number | undefined];
+    setKmsDriven: (v: [number | undefined, number | undefined]) => void;
     onFilterChange: () => void;
     onReset: () => void;
 }
 
 export default function FiltersSidebar({
-    brand,
-    setBrand,
-    fuel,
-    setFuel,
-    year,
-    setYear,
-    owner,
-    setOwner,
+    vehicleType,
+    setVehicleType,
+    yearRange,
+    setYearRange,
     priceRange,
     setPriceRange,
+    kmsDriven,
+    setKmsDriven,
     onFilterChange,
     onReset,
 }: FiltersSidebarProps) {
     return (
-        <div className="p-4 space-y-4 w-full max-w-xs overflow-y-auto border-1 rounded-xl shadow-xl">
-            <BrandFilter brand={brand} setBrand={setBrand} />
-            <FuelFilter fuel={fuel} setFuel={setFuel} />
-            <YearFilter year={year} setYear={setYear} />
-            <OwnerFilter owner={owner} setOwner={setOwner} />
+        <div className="p-4 space-y-4 w-full max-w-xs overflow-y-auto border-1 rounded-xl shadow-xl bg-white">
+            <VehicleTypeFilter vehicleType={vehicleType} setVehicleType={setVehicleType} />
+            <YearFilter yearRange={yearRange} setYearRange={setYearRange} />
             <PriceRangeFilter priceRange={priceRange} setPriceRange={setPriceRange} />
+            <KmsDrivenFilter kmsDriven={kmsDriven} setKmsDriven={setKmsDriven} />
 
             <div className="pt-4 flex justify-between text-sm">
                 <button

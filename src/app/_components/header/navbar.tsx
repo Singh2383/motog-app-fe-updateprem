@@ -9,13 +9,14 @@ import { MapPin } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import LoginBtn from "./login-btn";
-import { FC } from "react";
+import { Dispatch, FC, SetStateAction } from "react";
 
-const Navbar: FC<{ isMenuOpen: boolean }> = ({ isMenuOpen }) => {
+const Navbar: FC<{ isMenuOpen: boolean, setMenuOpen: Dispatch<SetStateAction<boolean>> }> = ({ isMenuOpen }) => {
     const path = usePathname();
     useDetectLocation();
     const setShow = useManualLocation(state => state.setShow);
     const locality = useLocation(state => state.locality);
+    //window.innerWidth;
     return (
         <div className={cn("md:block", isMenuOpen ? "block" : "hidden")}>
             <div className="container mx-auto px-4 sm:px-8 md:px-16 lg:px-24">
