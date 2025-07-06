@@ -1,42 +1,41 @@
 'use client';
 
 import { Input } from '@/components/ui/input';
-import axios, { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
 import React, { useState } from 'react';
-
-import { useAuthStore } from '../../../components/stores/auth-store';
-import { useLoginPopup } from '@/hooks/use-login-popup';
 import { toast } from 'sonner';
 import DetailForm from './detail-form';
 import PhotoUploads from './photo-upload';
 import { Button } from '@/components/ui/button';
 import ConfirmRcDetail from './confirm-rc-details';
 import { useConfirmRCDetail } from '@/hooks/use-confirm-rc-detail';
+import { postWithAuth } from '@/lib/post-with-auth';
+import { useAuthStore } from '@/components/stores/auth-store';
+import { usePathname, useRouter } from 'next/navigation';
 
 const SellCarVerification = () => {
-  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL;
   const [regNum, setRegNum] = useState("");
-  const token = useAuthStore(state => state.token);
-  const showLogin = useLoginPopup(state => state.setShow);
   const setShowConfirmDetail = useConfirmRCDetail(state => state.setShow);
+  const { hasHydrated, token } = useAuthStore();
+  const router = useRouter();
+  const path = usePathname();
 
   const verifyRegNo = async () => {
     if (!regNum) {
       toast.warning("Please enter a registration number.")
       return;
     }
-
-    if (!token) {
-      showLogin(true);
+    if (!hasHydrated) {
+      toast.warning("Please give it a moment");
+      return;
+    }
+    if (!token?.access_token) {
+      router.replace(`${path}?auth-state=login`);
       return;
     }
 
     try {
-      const result = await axios.post(
-        `${baseUrl}/vehicle-verify`,
-        { reg_no: regNum }, { headers: { Authorization: `Bearer ${token.access_token}` } }
-      );
-
+      const result = await postWithAuth(`/vehicle-verify`, { reg_no: regNum });
       if (result.status === 200) {
         toast.success("Car verified successfully!");
         setTimeout(() => {

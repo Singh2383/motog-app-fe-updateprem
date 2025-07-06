@@ -50,12 +50,6 @@ export default function DetailForm() {
         e.preventDefault();
         startTransition(async () => {
             try {
-                //backup in case the postwithAuth fails
-                // const res = await axios.post(
-                //     `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/listings`,
-                //     { ...formData, reg_no },
-                //     { headers: { Authorization: `Bearer ${token?.access_token}` } }
-                // );
                 const res = await postWithAuth("/listings", { ...formData, reg_no });
                 toast.success("Listing Successfull");
                 
