@@ -16,6 +16,8 @@ import { toOrdinal } from "@/lib/my-utils";
 import { useAuthStore } from "../../../components/stores/auth-store";
 import { fetchWithAuth } from "@/lib/fetch-with-auth";
 import { CarDto } from "@/hooks/use-cars";
+import { Pencil } from "lucide-react";
+import EditListingForm from "@/app/my-listings/_components/edit-listing-form";
 
 const CarDetailsPage: FC = () => {
     const { id } = useParams() as { id?: string };
@@ -24,6 +26,8 @@ const CarDetailsPage: FC = () => {
     const [car, setCar] = useState<CarDto | null>(null);
     const [showContact, setShowContact] = useState(false);
 
+    const isOwner = token?.user.id === car?.user_id;
+    const [showEditModal, setShowEditModal] = useState(false);
 
     useEffect(() => {
         if (!id || !token?.access_token) return;
@@ -50,12 +54,23 @@ const CarDetailsPage: FC = () => {
                     <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
                         {rc.vehicle_manufacturer_name ?? "Car"} {rc.model ?? ""}
                     </h1>
-
                     <div className="mt-1 flex items-center gap-4 text-gray-700">
                         <span className="text-lg font-bold">
                             ₹{car.price.toLocaleString("en-IN")}
                         </span>
                     </div>
+                    {isOwner && (
+                        <div className="bg-blue-50 border border-blue-200 rounded-md p-3 mt-4 inline-block">
+                            <button
+                                onClick={() => setShowEditModal(true)}
+                                className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-800 transition"
+                            >
+                                <Pencil size={18} />
+                                <span className="hidden sm:inline">Edit your listing</span>
+                            </button>
+
+                        </div>
+                    )}
                 </header>
 
                 {/* ── Image carousel ─────────────────────────────────────── */}
@@ -144,6 +159,24 @@ const CarDetailsPage: FC = () => {
                         <ContactRow icon={Mail} value={car.owner_email} />
                         <ContactRow icon={MapPin} value={car.usr_inp_city} />
                     </div>
+                )}
+
+                {/* option to edit if owner */}
+                {isOwner && showEditModal && (
+                    <>
+                        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
+                            <div className="bg-white rounded-lg shadow-lg max-w-2xl w-full p-6 relative">
+                                <button
+                                    onClick={() => setShowEditModal(false)}
+                                    className="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
+                                >
+                                    X
+                                </button>
+                                <h2 className="text-lg font-semibold mb-4">Edit Your Listing</h2>
+                                <EditListingForm listing={car} />
+                            </div>
+                        </div>
+                    </>
                 )}
             </div>
         </div>
