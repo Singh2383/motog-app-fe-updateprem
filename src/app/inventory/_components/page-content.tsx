@@ -36,7 +36,8 @@ export default function InventoryPageContent() {
         minPrice: priceRange[0],
         maxPrice: priceRange[1],
         verified: verifiedOnly || undefined,
-        city: sp?.get("city") ?? "",           // optional extra param
+        city: sp?.get("city") ?? "",
+        search_q: sp?.get("search_q") ?? "",           // optional extra param
     }), [brand, fuel, year, transmission, owner, priceRange, verifiedOnly, page, sp]);
 
     /** keep URL in sync so users can share & refresh */
@@ -51,8 +52,6 @@ export default function InventoryPageContent() {
     };
 
     const { data, isLoading, isError } = useCars(queryParams);
-
-    console.log("use cars data:", data);
 
     const handleFilterChange = () => {
         setPage(1);

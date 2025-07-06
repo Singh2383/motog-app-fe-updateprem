@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/sonner";
 import Header from "./_components/header";
 import ReactQueryProvider from "./_components/react-query-provider";
 import Footer from "./_components/footer";
+import AuthProvider from "@/components/providers/auth-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,7 +21,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "MotoG-Used Cars & Bikes",
   description: "A platform where Used Cars & Bikes can be sell and buy.",
-    icons: {
+  icons: {
     icon: [
       { url: "/favicon.ico" },
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
@@ -43,9 +44,11 @@ export default function RootLayout({
       >
         <ReactQueryProvider >
           <Header />
-          <main>
-            {children}
-          </main>
+          <AuthProvider >
+            <main>
+              {children}
+            </main>
+          </AuthProvider>
           <Footer />
         </ReactQueryProvider>
         <Toaster richColors />

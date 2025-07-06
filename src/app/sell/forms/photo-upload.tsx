@@ -3,12 +3,12 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { useAuth } from "@/hooks/use-auth";
 import { useListingForms } from "@/hooks/use-listing-forms";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import { ChangeEvent, startTransition, useRef, useState } from "react";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { toast } from "sonner";
+import { postWithAuth } from "@/lib/post-with-auth";
 
 type PhotoUploadProps = {
     maxImages?: number;
@@ -26,7 +26,6 @@ const PhotoUploads = ({ maxImages = 5 }: PhotoUploadProps) => {
     const listingId = useListingForms(state => state.listingId);
     const showImageUpload = useListingForms(state => state.showImageUpload);
     const setShowImageUpload = useListingForms(state => state.setShowImageUpload);
-    const token = useAuth(state => state.token);
 
     if (!showImageUpload) return null;
 
@@ -101,13 +100,11 @@ const PhotoUploads = ({ maxImages = 5 }: PhotoUploadProps) => {
             });
 
             try {
-                const res = await axios.post(
-                    `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/listings/${listingId}/images`,
-                    formData,
-                    { headers: { Authorization: `Bearer ${token}` } }
-                );
-                toast.success("Image upload Succeeded.");
-                console.log("image upload res:", res);
+                const res = await postWithAuth(`/listings/${listingId}/images`, formData);
+                if (res.status === 200)
+                    toast.success("Image upload Succeeded.");
+                else toast.error("Failed image upload!");
+                setImages([]);
                 setTimeout(() => setShowImageUpload(false, ""), 500);
             } catch (err) {
                 const e = err as AxiosError;
@@ -126,7 +123,7 @@ const PhotoUploads = ({ maxImages = 5 }: PhotoUploadProps) => {
             <div className='w-full max-w-3xl fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 bg-white rounded-2xl'>
                 <div className='flex flex-col sm:flex-row w-full shadow-lg rounded-xl bg-green-400'>
                     <Card id='listing-car-detail' className="w-full outline-none border-none shadow-none relative">
-                        <IoCloseCircleOutline className="absolute -top-1 -right-8 text-neutral-400 text-2xl hover:cursor-pointer hover:text-neutral-800" onClick={() => setShowImageUpload(false, "")} />
+                        <IoCloseCircleOutline className="absolute top-1 right-1 text-neutral-400 text-2xl hover:cursor-pointer hover:text-neutral-800" onClick={() => setShowImageUpload(false, "")} />
                         <CardHeader>
                             <div className="flex space-x-2">
                                 <Badge>Upload Photos</Badge>

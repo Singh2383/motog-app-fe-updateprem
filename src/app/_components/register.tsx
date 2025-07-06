@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,30 +13,24 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useRegisterPopup } from '../../hooks/use-register-popup';
-import { useLoginPopup } from '../../hooks/use-login-popup';
 import Image from 'next/image';
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { toast } from 'sonner';
 import Link from 'next/link';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-const Register: React.FC = () => {
+const RegisterContent: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
 
-  const show = useRegisterPopup(state => state.show);
-  const setShowRegister = useRegisterPopup(state => state.setShow);
-  const setShowLogin = useLoginPopup(state => state.setShow);
+  const router = useRouter();
+  const path = usePathname();
+  const sp = useSearchParams();
 
   const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL;
 
-  if (!show) return null;
-
-  const login = () => {
-    setShowLogin(true);
-    setShowRegister(false);
-  }
+  if (!sp.get("auth-state") || sp.get("auth-state") !== "signup") return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,28 +50,19 @@ const Register: React.FC = () => {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        toast.success("Registration successful! Redirecting to login...");
-        console.log('Registration successful:', data);
+        toast.success("Registration successful! Please check your Inbox");
         // Optionally, redirect to login page after a short delay
-        setTimeout(() => {
-          setShowLogin(true);
-          setShowRegister(false);
-        }, 2000);
+        router.replace(path);
       } else {
         const errorData = await response.json();
         toast.error('Registration failed. Please try again.');
-        console.log('Registration failed:', errorData);
+        console.error('Registration failed:', errorData);
       }
     } catch (err) {
-      console.log('Network error during registration:', err);
+      console.error('Network error during registration:', err);
       toast.error('Network error. Could not connect to the server.');
     }
   };
-
-  const close = () => {
-    setShowRegister(false);
-  }
 
   return (
     <div className='fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4'>
@@ -85,15 +70,15 @@ const Register: React.FC = () => {
         <div className='hidden sm:block flex-1 relative bg-white rounded-l-3xl'>
           <Image src={'/images/_reg_img.png'} fill alt='login image' className='object-cover rounded-l-xl shadow-lg' />
         </div>
-          <Card id='login' className="w-full max-w-sm ml-auto mr-auto sm:mr-0 outline-none border-none shadow-none relative rounded-r-xl rounded-l-xl sm:rounded-l-none">
-          <IoCloseCircleOutline className="absolute top-1 right-1 text-neutral-400 text-2xl hover:cursor-pointer hover:text-neutral-800" onClick={close} />
+        <Card id='login' className="w-full max-w-sm ml-auto mr-auto sm:mr-0 outline-none border-none shadow-none relative rounded-r-xl rounded-l-xl sm:rounded-l-none">
+          <IoCloseCircleOutline className="absolute top-1 right-1 text-neutral-400 text-2xl hover:cursor-pointer hover:text-neutral-800" onClick={() => router.replace(path)} />
           <CardHeader>
             <CardTitle>Create your account</CardTitle>
             <CardDescription className='hidden sm:block'>
               Enter your email below to create an account
             </CardDescription>
             <CardAction>
-              <Button variant="link" onClick={login}>Have an account?</Button>
+              <Button variant="link" onClick={() => router.replace(`${path}?auth-state=login`)}>Have an account?</Button>
             </CardAction>
           </CardHeader>
           <CardContent>
@@ -137,5 +122,13 @@ const Register: React.FC = () => {
     </div>
   );
 };
+
+const Register = () => {
+  return (
+    <Suspense fallback={<div className='min-h-screen flex justify-center items-center'><span>Loading...</span></div>}>
+      <RegisterContent />
+    </Suspense>
+  )
+}
 
 export default Register;
