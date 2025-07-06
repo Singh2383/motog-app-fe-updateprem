@@ -16,7 +16,7 @@ const Header = () => {
         <header className="fixed top-0 left-0 right-0 border-b shadow-sm z-50">
             <div className='bg-white'>
                 <BrandLine isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
-                <Navbar isMenuOpen={isMenuOpen} />
+                <Navbar isMenuOpen={isMenuOpen} setMenuOpen={setIsMenuOpen} />
             </div>
             <VerifyEmailBannerLine />
             <ManualLocation />
