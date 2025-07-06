@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import axios, { AxiosError } from 'axios';
 import React, { useState } from 'react';
 
-import { useAuth } from '@/hooks/use-auth';
+import { useAuthStore } from '../../../components/stores/auth-store';
 import { useLoginPopup } from '@/hooks/use-login-popup';
 import { toast } from 'sonner';
 import DetailForm from './detail-form';
@@ -16,7 +16,7 @@ import { useConfirmRCDetail } from '@/hooks/use-confirm-rc-detail';
 const SellCarVerification = () => {
   const baseUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL;
   const [regNum, setRegNum] = useState("");
-  const token = useAuth(state => state.token);
+  const token = useAuthStore(state => state.token);
   const showLogin = useLoginPopup(state => state.setShow);
   const setShowConfirmDetail = useConfirmRCDetail(state => state.setShow);
 
@@ -27,7 +27,6 @@ const SellCarVerification = () => {
     }
 
     if (!token) {
-      console.log("login required");
       showLogin(true);
       return;
     }
@@ -35,10 +34,9 @@ const SellCarVerification = () => {
     try {
       const result = await axios.post(
         `${baseUrl}/vehicle-verify`,
-        { reg_no: regNum }, { headers: { Authorization: `Bearer ${token}` } }
+        { reg_no: regNum }, { headers: { Authorization: `Bearer ${token.access_token}` } }
       );
 
-      console.log("verify result: ", result);
       if (result.status === 200) {
         toast.success("Car verified successfully!");
         setTimeout(() => {

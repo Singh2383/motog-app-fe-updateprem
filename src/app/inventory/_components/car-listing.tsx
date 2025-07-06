@@ -19,11 +19,8 @@ export default function CarsListing({
     onPageChange: (p: number) => void;
 }) {
     if (!cars?.length) {
-        console.log("no cars found!", cars);
         return <p className="text-gray-600">No cars match your filters.</p>;
     }
-
-    console.log("cars: ", cars);
 
     return (
         <div className="space-y-6">

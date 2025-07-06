@@ -13,19 +13,26 @@ interface AuthResponse {
   };
 }
 
-interface AuthStore {
+interface AuthState {
   token: AuthResponse | undefined;
   setToken: (t?: AuthResponse) => void;
+  hasHydrated: boolean;
+  setHasHydrated: (v: boolean) => void;
 }
 
-export const useAuth = create<AuthStore>()(
-  persist(
+export const useAuthStore = create<AuthState>()(
+  persist<AuthState>(
     (set) => ({
       token: undefined,
       setToken: (t) => set({ token: t }),
+      hasHydrated: false,
+      setHasHydrated: (v) => set({ hasHydrated: v }),
     }),
     {
-      name: 'motog-auth', // key in localStorage
+      name: 'motog-auth',
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true);
+      },
     }
   )
 );

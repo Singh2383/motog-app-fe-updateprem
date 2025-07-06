@@ -45,18 +45,16 @@ const ManualLocation = () => {
         const delay = setTimeout(() => {
             startTransition(async () => {
                 const { data, error }: IPredictionResult = await getCitySuggestions(input);
-                console.log("predictions data: ", data);
-                console.log("prediction error:", error);
+                console.error("prediction error:", error);
                 if (data) {
                     if (data.error) {
-                        console.log("error fetching suggestions:", data.error);
+                        console.error("error fetching suggestions:", data.error);
                         toast.error("Oops! Can't find your place!");
                     } else {
-                        console.log("success fetching suggestions: ", data);
                         setSuggestions(data.suggestions ?? []);
                     }
                 } else {
-                    console.log("something wrong in fetching suggestions", error);
+                    console.error("something wrong in fetching suggestions", error);
                     toast.error("Oops! Something wrong looking up!");
                 }
             });
