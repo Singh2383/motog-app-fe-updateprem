@@ -29,6 +29,16 @@ interface ISellForm {
     description: string;
 }
 
+type VehicleListing = {
+    vehicle_type: string;
+    reg_no: string;
+    kilometers_driven: number;
+    price: number;
+    city: string;
+    seller_phone: string;
+    description: string;
+};
+
 export default function DetailForm() {
     const [currentStep, setCurrentStep] = useState(0);
     const [formData, setFormData] = useState<ISellForm>({
@@ -50,17 +60,12 @@ export default function DetailForm() {
         e.preventDefault();
         startTransition(async () => {
             try {
-                //backup in case the postwithAuth fails
-                // const res = await axios.post(
-                //     `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/listings`,
-                //     { ...formData, reg_no },
-                //     { headers: { Authorization: `Bearer ${token?.access_token}` } }
-                // );
-                const res = await postWithAuth("/listings", { ...formData, reg_no });
+                const { data } = await postWithAuth<VehicleListing, { id: string }>("/listings",
+                    { ...formData, reg_no });
+
                 toast.success("Listing Successfull");
-                
                 setTimeout(() => {
-                    setShowImageUpload(true, res.data.id);
+                    setShowImageUpload(true, data.id);
                     setShowDetailForm(false, "");
                 }, 500);
             } catch (e) {

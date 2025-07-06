@@ -24,7 +24,7 @@ const BrandLine: FC<BrandLineProps> = ({ isMenuOpen, setIsMenuOpen }) => {
         if (event.key !== "Enter" || !search) {
             return;
         }
-        router.push(`/inventory?search=${search}`);
+        router.push(`/inventory?search_q=${search}`);
     }
 
     return (
@@ -90,7 +90,7 @@ const BrandLine: FC<BrandLineProps> = ({ isMenuOpen, setIsMenuOpen }) => {
                     <Button variant="ghost" size="sm" className="flex md:hidden items-center gap-2 justify-start md:justify-center"
                         onClick={() => setShow(true)}>
                         <MapPin className="h-4 w-4" />
-                        <span className=''>{locality?.structuredFormat.mainText.text ?? 'Select Location'}</span>
+                        <span className=''>{locality?.mainText ?? 'Select Location'}</span>
                     </Button>
                 </div>
             </div>
