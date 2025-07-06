@@ -1,16 +1,17 @@
 'use client'
 
-import React from 'react'
-import { useLoginPopup } from '@/hooks/use-login-popup';
+import React from 'react';
 import { VscAccount } from "react-icons/vsc";
 import { IoMdLogOut } from "react-icons/io";
-import { useAuth } from '@/hooks/use-auth';
+import { useAuthStore } from '../../stores/auth-store';
 import { Button } from '@/components/ui/button';
+import { usePathname, useRouter } from 'next/navigation';
 
 const LoginBtn = () => {
-    const setShowLogin = useLoginPopup(state => state.setShow);
-    const token = useAuth(state => state.token);
-    const setToken = useAuth(state => state.setToken);
+    const router = useRouter();
+    const path = usePathname();
+    const token = useAuthStore(state => state.token);
+    const setToken = useAuthStore(state => state.setToken);
 
     if (token) {
         return (
@@ -22,7 +23,7 @@ const LoginBtn = () => {
     }
 
     return (
-        <Button variant={'ghost'} className=' hover:cursor-pointer flex items-center space-x-2' onClick={() => setShowLogin(true)}>
+        <Button variant={'ghost'} className=' hover:cursor-pointer flex items-center space-x-2' onClick={() => router.replace(`${path}?auth-state=login`)}>
             <VscAccount className='text-lg' />
             Login / Register
         </Button>

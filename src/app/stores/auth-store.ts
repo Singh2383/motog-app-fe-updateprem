@@ -13,12 +13,12 @@ interface AuthResponse {
   };
 }
 
-interface AuthStore {
+interface AuthState {
   token: AuthResponse | undefined;
   setToken: (t?: AuthResponse) => void;
 }
 
-export const useAuth = create<AuthStore>()(
+export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
       token: undefined,

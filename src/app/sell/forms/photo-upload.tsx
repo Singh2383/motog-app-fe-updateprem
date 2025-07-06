@@ -3,7 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { useAuth } from "@/hooks/use-auth";
+import { useAuthStore } from "../../stores/auth-store";
 import { useListingForms } from "@/hooks/use-listing-forms";
 import axios, { AxiosError } from "axios";
 import { ChangeEvent, startTransition, useRef, useState } from "react";
@@ -26,7 +26,7 @@ const PhotoUploads = ({ maxImages = 5 }: PhotoUploadProps) => {
     const listingId = useListingForms(state => state.listingId);
     const showImageUpload = useListingForms(state => state.showImageUpload);
     const setShowImageUpload = useListingForms(state => state.setShowImageUpload);
-    const token = useAuth(state => state.token);
+    const token = useAuthStore(state => state.token);
 
     if (!showImageUpload) return null;
 

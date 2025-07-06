@@ -6,7 +6,7 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
-import { useAuth } from "@/hooks/use-auth";
+import { useAuthStore } from "../../stores/auth-store";
 import { useListingForms } from "@/hooks/use-listing-forms";
 import { cn } from "@/lib/utils";
 import { Label } from "@radix-ui/react-label";
@@ -31,7 +31,7 @@ interface ISellForm {
 }
 
 export default function DetailForm() {
-    const token = useAuth(state => state.token);
+    const token = useAuthStore(state => state.token);
     const [currentStep, setCurrentStep] = useState(0);
     const [formData, setFormData] = useState<ISellForm>({
         vehicle_type: "car",

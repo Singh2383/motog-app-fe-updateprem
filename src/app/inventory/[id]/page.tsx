@@ -11,21 +11,53 @@ import {
 import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { useCarDetails } from "@/hooks/use-car-details";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Phone, MapPin, Mail } from "lucide-react";
 import { extractYear } from "../_components/car-card";
 import { toOrdinal } from "@/lib/my-utils";
+import { useAuthStore } from "../../stores/auth-store";
+import { useLoginPopup } from "@/hooks/use-login-popup";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { CarDto } from "@/hooks/use-cars";
+import { useRequireAuth } from "@/hooks/use-required-auth";
+import { fetchWithAuth } from "@/lib/fetch-with-auth";
 
 export default function CarDetailsPage() {
     const { id } = useParams() as { id: string };
-    const { data: car, isLoading, isError } = useCarDetails(id);
     const [showContact, setShowContact] = useState(false);
+    const token = useAuthStore(state => state.token);
+    //const setShowLogin = useLoginPopup(state => state.setShow);
 
-    if (isLoading)
-        return <p className="text-center mt-20">Loading car details...</p>;
-    if (isError || !car)
-        return <p className="text-center mt-20">Car not found.</p>;
+    useRequireAuth();
+
+    const { data: car, isLoading, isError, error } = useQuery<CarDto>({
+        queryKey: ["listing", id, token?.access_token],
+        queryFn: async () => (await fetchWithAuth(`/listings/${id}`)).data,
+        // enabled: !!id && !!token?.access_token,
+        // staleTime: 1000 * 60 * 24,
+        // retry: (failureCount, error) => {
+        //     // Don't retry on authentication errors
+        //     if (error?.response?.status === 401) return false;
+        //     return failureCount < 3;
+        // }
+    });
+
+    if (isLoading) {
+        return (
+            <div className="min-h-screen bg-white flex justify-center items-center">
+                <span>The page is being loaded. Please wait a moment.</span>
+            </div>
+        );
+    }
+
+    if (!car) {
+        return (
+            <div className="min-h-screen bg-white flex justify-center items-center">
+                <span>There is no data available for this vehicle. Or Something might have gone wrong.</span>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen w-full bg-white pt-32 md:pt-36 lg:pt-40 pb-16 sm:px-8 md:px-20 overflow-x-hidden">
@@ -33,7 +65,7 @@ export default function CarDetailsPage() {
                 {/* Title & Price */}
                 <div className="px-4 md:px-0">
                     <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
-                        CAR NAME
+                        {car.rc_details?.vehicle_manufacturer_name} {car.rc_details?.model || 'CAR'}
                     </h1>
                     <div className="mt-1 flex items-center gap-4 text-gray-700">
                         <span className="text-lg font-bold">
@@ -50,7 +82,7 @@ export default function CarDetailsPage() {
                                 <div className="w-full relative aspect-[4/3] rounded-md overflow-hidden shadow">
                                     <Image
                                         src={url}
-                                        alt={`image ${index + 1}`}
+                                        alt={`${car.rc_details?.vehicle_manufacturer_name} image ${index + 1}`}
                                         className="object-cover"
                                         fill
                                         sizes="100vw"
@@ -99,7 +131,7 @@ export default function CarDetailsPage() {
                     <div className="pt-4 px-4 md:px-0">
                         <Button
                             size="lg"
-                            className="w-full sm:w-auto "
+                            className="w-full sm:w-auto"
                             onClick={() => setShowContact(true)}
                         >
                             Contact Seller
