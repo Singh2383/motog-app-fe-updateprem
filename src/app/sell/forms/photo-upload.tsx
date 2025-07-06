@@ -100,12 +100,6 @@ const PhotoUploads = ({ maxImages = 5 }: PhotoUploadProps) => {
             });
 
             try {
-                //backup code when postWithAuthFails
-                // const res = await axios.post(
-                //     `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/listings/${listingId}/images`,
-                //     formData,
-                //     { headers: { Authorization: `Bearer ${token?.access_token}` } }
-                // );
                 const res = await postWithAuth(`/listings/${listingId}/images`, formData);
                 if (res.status === 200)
                     toast.success("Image upload Succeeded.");

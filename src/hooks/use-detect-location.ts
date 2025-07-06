@@ -1,10 +1,22 @@
-import { getReverseGeocode } from "@/app/actions/getReverseGeocode";
-import { useEffect, useState } from "react";
+"use client";
+
+import { useEffect } from "react";
 import useLocation from "./use-location";
 import { toast } from "sonner";
+import { postWithoutAuth } from "@/lib/post-without-auth";
+
+type GeoCode = {
+    lat: string;
+    lng: string;
+}
+
+type Location = {
+    mainText: string;
+    state: string;
+    country: string;
+}
 
 const useDetectLocation = () => {
-    const [deniedPermission, setDeniedPermission] = useState(false);
     const setGeocode = useLocation(state => state.setGeocode);
     const setLocality = useLocation(state => state.setLocality);
 
@@ -17,22 +29,18 @@ const useDetectLocation = () => {
         navigator.geolocation.getCurrentPosition(
             async (position) => {
                 const { latitude, longitude } = position.coords;
-                setGeocode({ lat: latitude, long: longitude });
-
-                const result = await getReverseGeocode(latitude, longitude);
-                //const result = await postWithoutAuth("get-location", {lat: latitude, lng: longitude});
-                if (result.placeId) {
-                    setLocality({ placeId: result.placeId, structuredFormat: result.structuredFormat });
-                }
+                setGeocode({ lat: latitude, lng: longitude });
+                const { data } = await postWithoutAuth<GeoCode, Location>("get-location",
+                    { lat: `${latitude}`, lng: `${longitude}` });
+                setLocality({ mainText: data.mainText, secondaryText: data.state, country: data.country });
             },
             error => {
                 console.warn("Location permission denied or failed:", error);
-                setDeniedPermission(true);
                 toast.warning("Please allow location access for better experience.");
             },
             { timeout: 5000 }
         );
-    }, [setGeocode, setLocality, deniedPermission]);
+    }, [setGeocode, setLocality]);
 }
 
 export default useDetectLocation;

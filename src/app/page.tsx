@@ -14,9 +14,9 @@ import { fetchWithOutAuth } from "@/lib/fetch-without-auth";
 export default function Home() {
   const location = useLocation(state => state.locality);
   const { data: featuredCars } = useQuery<AxiosResponse<CarDto[]>>({
-    queryKey: ["featured-listings", location?.structuredFormat.mainText.text],
+    queryKey: ["featured-listings", location?.mainText],
     queryFn: () => fetchWithOutAuth(
-      `/homepage-listings?city=${location?.structuredFormat.mainText.text ?? 'New Delhi'}`
+      `/homepage-listings?city=${location?.mainText ?? 'New Delhi'}`
     ),
   });
 
@@ -106,7 +106,7 @@ export default function Home() {
       <section className="container mx-auto px-4 py-8 sm:py-12">
         <div className="text-center mb-8">
           <h2 className="text-2xl sm:text-3xl font-bold mb-2">Featured Vehicles</h2>
-          <p className="text-muted-foreground text-base">Latest listings this week in {location?.structuredFormat.mainText.text ?? 'New Delhi'}</p>
+          <p className="text-muted-foreground text-base">Latest listings this week in {location?.mainText ?? 'New Delhi'}</p>
         </div>
 
         {featuredCars && featuredCars.data.length > 0 ? (

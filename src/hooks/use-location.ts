@@ -1,23 +1,28 @@
 import { create } from "zustand";
-import { ISuggestion as ILocality } from "@/app/_components/header/manual-location";
+import { ILocation } from "@/app/_components/header/manual-location";
+import { v4 as uuidv4 } from "uuid";
 
-interface ILocation {
-    geocode?: { lat: number, long: number };
-    locality?: ILocality;
+type Coords = {
+    lat: number;
+    lng: number;
 }
 
-interface ILocationSetter {
-    setGeocode: (geo: { lat: number, long: number }) => void;
-    setLocality: (loc: ILocality) => void;
+interface ILocationState {
+    geocode?: Coords;
+    locality?: ILocation;
+    setLocality: (loc: ILocation) => void;
+    setGeocode: (g?: Coords) => void;
+    sessionToken: string;
+    generateSessionToken: () => void;
 }
 
-type ILocationStore = ILocation & ILocationSetter;
-
-const useLocation = create<ILocationStore>(set => ({
+const useLocation = create<ILocationState>(set => ({
+    sessionToken: "",
     geocode: undefined,
     locality: undefined,
-    setGeocode: (geo) => set(prev => ({ ...prev, geocode: geo })),
     setLocality: (loc) => set(prev => ({ ...prev, locality: loc })),
+    setGeocode: (g) => set(prev => ({ ...prev, geocode: g })),
+    generateSessionToken: () => set(prev => ({ ...prev, sessionToken: uuidv4() })),
 }));
 
 export default useLocation;

@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { FC } from "react";
 import { useAuthStore } from "@/components/stores/auth-store";
-import axios from "axios";
+import { postWithoutAuth } from "@/lib/post-without-auth";
 
 const VerifyEmailBannerLine: FC = () => {
     const auth = useAuthStore(state => state.token);
@@ -13,7 +13,7 @@ const VerifyEmailBannerLine: FC = () => {
     if (auth.user?.is_email_verified) return null;
 
     const resendEmail = () => {
-        axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/resend-verification-email`, { email: auth?.user.email })
+        postWithoutAuth(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/resend-verification-email`, { email: auth?.user.email })
     }
 
     return (

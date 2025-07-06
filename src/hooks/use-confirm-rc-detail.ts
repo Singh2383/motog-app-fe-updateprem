@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { RcDetails } from "./use-cars";
 
-type RcDetailsWithRegNo = RcDetails & { reg_no: string };
+export type RcDetailsWithRegNo = RcDetails & { reg_no: string };
 
 type UseConfirmStore = {
     show: boolean;
