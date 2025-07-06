@@ -8,6 +8,7 @@ import Login from '../login';
 import Register from '../register';
 import ForgotPassword from '../forgot-password';
 import VerifyEmailBannerLine from './verify-email';
+import ChangePassword from '../change-password';
 
 const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -23,6 +24,7 @@ const Header = () => {
             <Login />
             <Register />
             <ForgotPassword />
+            <ChangePassword />
         </header>
     );
 };
