@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { FC } from "react";
 import { useAuthStore } from "@/components/stores/auth-store";
 import { postWithoutAuth } from "@/lib/post-without-auth";
+import { toast } from "sonner";
 
 const VerifyEmailBannerLine: FC = () => {
     const auth = useAuthStore(state => state.token);
@@ -12,8 +13,17 @@ const VerifyEmailBannerLine: FC = () => {
     if (!auth?.user) return null;
     if (auth.user?.is_email_verified) return null;
 
-    const resendEmail = () => {
-        postWithoutAuth(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/resend-verification-email`, { email: auth?.user.email })
+    const resendEmail = async () => {
+        try {
+            const { status } = await postWithoutAuth(`resend-verification-email`,
+                { email: auth?.user.email });
+            if (status === 200) {
+                toast.success("Email Sent!");
+            }
+        } catch (err) {
+            toast.error("Something Went Wrong!");
+            console.error("Failed resend verification email:", err);
+        }
     }
 
     return (
