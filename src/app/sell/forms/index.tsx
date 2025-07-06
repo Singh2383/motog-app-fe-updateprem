@@ -8,7 +8,7 @@ import DetailForm from './detail-form';
 import PhotoUploads from './photo-upload';
 import { Button } from '@/components/ui/button';
 import ConfirmRcDetail from './confirm-rc-details';
-import { useConfirmRCDetail } from '@/hooks/use-confirm-rc-detail';
+import { RcDetailsWithRegNo, useConfirmRCDetail } from '@/hooks/use-confirm-rc-detail';
 import { postWithAuth } from '@/lib/post-with-auth';
 import { useAuthStore } from '@/components/stores/auth-store';
 import { usePathname, useRouter } from 'next/navigation';
@@ -35,11 +35,11 @@ const SellCarVerification = () => {
     }
 
     try {
-      const result = await postWithAuth(`/vehicle-verify`, { reg_no: regNum });
-      if (result.status === 200) {
+      const { data, status } = await postWithAuth<{ reg_no: string }, { data: RcDetailsWithRegNo }>(`/vehicle-verify`, { reg_no: regNum });
+      if (status === 200) {
         toast.success("Car verified successfully!");
         setTimeout(() => {
-          setShowConfirmDetail(true, result.data.data);
+          setShowConfirmDetail(true, data.data);
           setRegNum("");
         }, 300);
         return;
