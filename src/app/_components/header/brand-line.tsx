@@ -24,7 +24,7 @@ const BrandLine: FC<BrandLineProps> = ({ isMenuOpen, setIsMenuOpen }) => {
         if (event.key !== "Enter" || !search) {
             return;
         }
-        router.push(`/inventory?search=${search}`);
+        router.push(`/inventory?search_q=${search}`);
     }
 
     return (
