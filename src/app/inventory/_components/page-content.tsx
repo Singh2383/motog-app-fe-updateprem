@@ -7,6 +7,7 @@ import { SlidersHorizontal } from 'lucide-react';
 import { useListings } from '@/hooks/use-cars';
 import FiltersSidebar from './filters';
 import CarsListing from './car-listing';
+import useLocation from '@/hooks/use-location';
 
 export default function InventoryPageContent() {
     const pageSize = Number(process.env.NEXT_PUBLIC_INVENTORY_PAGE_SIZE) || 15;
@@ -18,7 +19,9 @@ export default function InventoryPageContent() {
         return vt === 'car' || vt === 'bike' ? vt : undefined;
     });
 
-    const [city, setCity] = useState<string>(sp.get('city') || '');
+    const location = useLocation(state => state.locality?.mainText ?? 'New Delhi');
+
+    const [city, setCity] = useState<string>(sp.get('city') || location);
     const [yearRange, setYearRange] = useState<[number | undefined, number | undefined]>([
         sp.get('min_year') ? Number(sp.get('min_year')) : undefined,
         sp.get('max_year') ? Number(sp.get('max_year')) : undefined,

@@ -1,4 +1,5 @@
 'use client';
+import { formatNumber } from '@/lib/format-number';
 import FilterSection from './filter-section';
 import { Slider } from '@/components/ui/slider';
 
@@ -28,8 +29,8 @@ export default function KmsDrivenFilter({
           onValueChange={(v) => setKmsDriven([v[0], v[1]])}
         />
         <div className="mt-2 text-sm text-gray-600 flex justify-between">
-          <span>{value[0].toLocaleString()} km</span>
-          <span>{value[1].toLocaleString()} km</span>
+          <span>{formatNumber(value[0])} km</span>
+          <span>{formatNumber(value[1])} km</span>
         </div>
         {(kmsDriven[0] !== undefined || kmsDriven[1] !== undefined) && (
           <button
