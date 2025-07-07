@@ -1,4 +1,5 @@
 'use client';
+import { formatNumber } from '@/lib/format-number';
 import FilterSection from './filter-section';
 import { Slider } from '@/components/ui/slider';
 
@@ -30,8 +31,8 @@ export default function PriceRangeFilter({
           step={0.5}
         />
         <div className="mt-2 text-sm text-gray-600 flex justify-between">
-          <span>{sliderValue[0]}L</span>
-          <span>{sliderValue[1]}L</span>
+          <span>{formatNumber(sliderValue[0] * 100000)}</span>
+          <span>{formatNumber(sliderValue[1] * 100000)}</span>
         </div>
       </div>
     </FilterSection>

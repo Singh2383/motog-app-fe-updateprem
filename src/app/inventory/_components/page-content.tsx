@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Sheet, SheetTrigger, SheetContent, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { SlidersHorizontal } from 'lucide-react';
 import { useListings } from '@/hooks/use-cars';
 import FiltersSidebar from './filters';
 import CarsListing from './car-listing';
+import useLocation from '@/hooks/use-location';
 
 export default function InventoryPageContent() {
     const pageSize = Number(process.env.NEXT_PUBLIC_INVENTORY_PAGE_SIZE) || 15;
@@ -18,7 +19,9 @@ export default function InventoryPageContent() {
         return vt === 'car' || vt === 'bike' ? vt : undefined;
     });
 
-    const [city, setCity] = useState<string>(sp.get('city') || '');
+    const location = useLocation(state => state.locality?.mainText);
+
+    const [city, setCity] = useState<string | undefined>(sp.get('city') || undefined);
     const [yearRange, setYearRange] = useState<[number | undefined, number | undefined]>([
         sp.get('min_year') ? Number(sp.get('min_year')) : undefined,
         sp.get('max_year') ? Number(sp.get('max_year')) : undefined,
@@ -35,6 +38,12 @@ export default function InventoryPageContent() {
     ]);
 
     const [page, setPage] = useState<number>(sp.get('page') ? Number(sp.get('page')) : 1);
+
+    useEffect(() => {
+        if (location) {
+            setCity(location);
+        }
+    }, [location]);
 
     const queryParams = useMemo(() => ({
         skip: (page - 1) * pageSize,
@@ -94,7 +103,7 @@ export default function InventoryPageContent() {
     return (
         <div className="bg-gray-50 min-h-screen pt-32 px-4 sm:px-6 lg:px-8 mb-4 mt-8">
             <div className="flex flex-col md:flex-row gap-6">
-                <div className="md:hidden">
+                .                <div className="md:hidden">
                     <Sheet>
                         <SheetTrigger className="inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm font-medium shadow-sm">
                             <SlidersHorizontal size={16} /> Filters
@@ -139,3 +148,4 @@ function CarsSkeleton() {
         </div>
     );
 }
+
