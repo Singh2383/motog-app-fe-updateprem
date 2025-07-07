@@ -13,6 +13,7 @@ import { Dispatch, FormEvent, SetStateAction, startTransition, useState } from "
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { toast } from "sonner";
 import { postWithAuth } from "@/lib/post-with-auth";
+import { CityInput } from "./city-input";
 
 const steps = [
     "Car Details",
@@ -99,7 +100,7 @@ export default function DetailForm() {
                             <form id="sell-car-detail" onSubmit={onFormSubmit}>
                                 <CarDetail currentStep={currentStep} setFormData={setFormData} />
                                 <PriceNFeature currentStep={currentStep} setFormData={setFormData} />
-                                <Contacts currentStep={currentStep} setFormData={setFormData} />
+                                <Contacts currentStep={currentStep} setFormData={setFormData} formData={formData} />
                             </form>
                         </CardContent>
                         <CardFooter className="flex-col gap-2">
@@ -183,7 +184,7 @@ const PriceNFeature = ({ currentStep, setFormData }: { currentStep: number, setF
     )
 }
 
-const Contacts = ({ currentStep, setFormData }: { currentStep: number, setFormData: Dispatch<SetStateAction<ISellForm>> }) => {
+const Contacts = ({ currentStep, setFormData, formData }: { currentStep: number, setFormData: Dispatch<SetStateAction<ISellForm>>, formData: ISellForm }) => {
     if (steps[currentStep] !== "Contact Information") return null;
     return (
         <div className="flex flex-col gap-6">
@@ -191,10 +192,9 @@ const Contacts = ({ currentStep, setFormData }: { currentStep: number, setFormDa
                 <div className="flex items-center">
                     <Label htmlFor="city">City</Label>
                 </div>
-                <Input id="city"
-                    onChange={(e) => setFormData(prev => ({ ...prev, city: e.target.value }))}
-                    required
-                    placeholder="Please enter your city."
+                <CityInput
+                    value={formData.city}
+                    onChange={(value) => setFormData(prev => ({ ...prev, city: value }))}
                 />
             </div>
             <div className="gap-2 sm:flex sm:space-x-4">
