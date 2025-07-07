@@ -7,7 +7,7 @@ import { CarDto } from './use-cars';
 import { useAuthStore } from '@/components/stores/auth-store';
 
 async function fetchMyListings(token: string | undefined): Promise<CarDto[]> {
-    const url = new URL(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/listings/my-listings`);
+    const url = new URL(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/listings/my-listings?skip=0&limit=50`);
 
     const res = await fetch(url.toString(), {
         method: 'GET',
