@@ -10,6 +10,7 @@ import { useListingForms } from "@/hooks/use-listing-forms";
 import { cn } from "@/lib/utils";
 import { Label } from "@radix-ui/react-label";
 import { Dispatch, FormEvent, SetStateAction, startTransition, useState } from "react";
+import { AxiosError } from "axios";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { toast } from "sonner";
 import { postWithAuth } from "@/lib/post-with-auth";
@@ -46,7 +47,7 @@ export default function DetailForm() {
         vehicle_type: "car",
         kilometers_driven: 0,
         price: 0,
-        city: "New Delhi",
+        city: "",
         seller_phone: "",
         description: "",
     });
@@ -69,9 +70,20 @@ export default function DetailForm() {
                     setShowImageUpload(true, data.id);
                     setShowDetailForm(false, "");
                 }, 500);
-            } catch (e) {
+            } catch (err) {
+                const e = err as AxiosError;
                 console.error("error listing: ", e);
-                toast.error("Something went wrong!");
+                if (e.response?.status === 401) {
+                    toast.error("Authentication failed. Please log in again.");
+                } else if (e.response?.status === 400) {
+                    const errorMessage =
+                        (e.response.data as any)?.detail || // from your API structure
+                        "Bad Request. Please check your input.";
+
+                    toast.error(errorMessage);
+                } else {
+                    toast.error("Something went wrong. Please try again later.");
+                }
             }
         });
     }
