@@ -7,6 +7,7 @@ import Header from "./_components/header";
 import ReactQueryProvider from "./_components/react-query-provider";
 import Footer from "./_components/footer";
 import AuthProvider from "@/components/providers/auth-provider";
+import { Analytics } from "@vercel/analytics/next"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -47,6 +48,7 @@ export default function RootLayout({
           <AuthProvider >
             <main>
               {children}
+              <Analytics />
             </main>
           </AuthProvider>
           <Footer />
