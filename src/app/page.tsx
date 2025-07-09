@@ -11,6 +11,8 @@ import CarCard from "./inventory/_components/car-card";
 import { CarDto } from "@/hooks/use-cars";
 import { fetchWithOutAuth } from "@/lib/fetch-without-auth";
 
+
+
 export default function Home() {
   const location = useLocation(state => state.locality);
   const { data: featuredCars } = useQuery<AxiosResponse<CarDto[]>>({
