@@ -118,7 +118,7 @@ const SubscriptionPage = () => {
               <button
   className={`mt-6 w-full py-2 px-4 rounded-lg font-semibold transition duration-300 ${
     isSelected
-      ? 'bg-black text-red-600 hover:bg-black-100'
+      ? 'bg-black text-white-600 hover:bg-black-100'
       : 'bg-red-100 text-black hover:bg-black-200'
   }`}
 >
