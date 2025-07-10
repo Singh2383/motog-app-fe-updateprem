@@ -125,7 +125,24 @@ const RegisterContent: React.FC = () => {
   </div>
   </CardFooter>
 
-          {/* <CardFooter className="flex-col gap-2">
+          {
+          <CardFooter className="flex-col gap-4">
+  <div className="flex items-start gap-2 text-sm text-neutral-700">
+    <input
+      type="checkbox"
+      id="terms"
+      className="mt-1"
+      checked={acceptedTerms}
+      onChange={(e) => setAcceptedTerms(e.target.checked)}
+    />
+    <label htmlFor="terms">
+      I accept the{" "}
+      <Link href="/docs/terms-of-use.pdf" className="underline" target="_blank">Terms of Use</Link>,{" "}
+      <Link href="/docs/privacy-policy.pdf" className="underline" target="_blank">Privacy Policy</Link>, and{" "}
+      <Link href="/docs/refund-policy.pdf" className="underline" target="_blank">Refund Policy</Link> of MotoG.
+    </label>
+  </div>
+  </CardFooter>/* <CardFooter className="flex-col gap-2">
             <Button type="submit" className="w-full" onClick={handleSubmit}>
               Register
             </Button>
