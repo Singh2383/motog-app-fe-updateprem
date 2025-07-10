@@ -75,10 +75,11 @@ export default function DetailForm() {
   const onFormSubmit = async (data: ISellForm) => {
     setLoading(true);
     try {
-      const { data: responseData } = await postWithAuth<ISellForm, { id: string }>("/listings", {
-        ...data,
-        reg_no,
-      });
+      const { data: responseData } = await postWithAuth<Omit<ISellForm, never> & { reg_no: string }, { id: string }>("/listings", {
+  ...data,
+  reg_no,
+});
+
 
       toast.success("Listing Successful");
       setTimeout(() => {
