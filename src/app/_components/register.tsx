@@ -30,41 +30,85 @@ const RegisterContent: React.FC = () => {
 
   const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL;
   const [acceptedTerms, setAcceptedTerms] = useState<boolean>(false);
+  // loading inteface
+  const [loading, setLoading] = useState<boolean>(false);
+
 
 
   if (!sp.get("auth-state") || sp.get("auth-state") !== "signup") return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (password !== confirmPassword) {
-      toast.error("Passwords do not match!");
-      return;
+  if (password !== confirmPassword) {
+    toast.error("Passwords do not match!");
+    return;
+  }
+
+  if (!acceptedTerms) {
+    toast.error("Please accept the terms and policies before registering.");
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    const response = await fetch(`${BACKEND_API_URL}/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (response.ok) {
+      toast.success("Registration successful! Please check your Inbox");
+      router.replace(path);
+    } else {
+      const errorData = await response.json();
+      toast.error('Registration failed. Please try again.');
+      console.error('Registration failed:', errorData);
     }
+  } catch (err) {
+    console.error('Network error during registration:', err);
+    toast.error('Network error. Could not connect to the server.');
+  } finally {
+    setLoading(false);
+  }
+};
 
-    try {
-      const response = await fetch(`${BACKEND_API_URL}/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
 
-      if (response.ok) {
-        toast.success("Registration successful! Please check your Inbox");
-        // Optionally, redirect to login page after a short delay
-        router.replace(path);
-      } else {
-        const errorData = await response.json();
-        toast.error('Registration failed. Please try again.');
-        console.error('Registration failed:', errorData);
-      }
-    } catch (err) {
-      console.error('Network error during registration:', err);
-      toast.error('Network error. Could not connect to the server.');
-    }
-  };
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+
+  //   if (password !== confirmPassword) {
+  //     toast.error("Passwords do not match!");
+  //     return;
+  //   }
+
+  //   try {
+  //     const response = await fetch(`${BACKEND_API_URL}/register`, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({ email, password }),
+  //     });
+
+  //     if (response.ok) {
+  //       toast.success("Registration successful! Please check your Inbox");
+  //       // Optionally, redirect to login page after a short delay
+  //       router.replace(path);
+  //     } else {
+  //       const errorData = await response.json();
+  //       toast.error('Registration failed. Please try again.');
+  //       console.error('Registration failed:', errorData);
+  //     }
+  //   } catch (err) {
+  //     console.error('Network error during registration:', err);
+  //     toast.error('Network error. Could not connect to the server.');
+  //   }
+  // };
 
   return (
     <div className='fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4'>
@@ -84,6 +128,7 @@ const RegisterContent: React.FC = () => {
             </CardAction>
           </CardHeader>
           <CardContent>
+            
             <form onSubmit={handleSubmit}> 
               {/* recent change */}
               <div className="flex flex-col gap-6">
@@ -106,6 +151,10 @@ const RegisterContent: React.FC = () => {
                   <Input id="reg-confirm-password" type="password" required onChange={(e) => setConfirmPassword(e.target.value)} />
                 </div>
               </div>
+              {/* ✅ Register Button with loading */}
+      <Button type="submit" className="w-full" loading={loading}>
+        {loading ? "Registering..." : "Register"}
+      </Button>
             </form>
           </CardContent>
           <CardFooter className="flex-col gap-4">
