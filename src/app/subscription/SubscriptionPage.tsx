@@ -47,14 +47,14 @@ const SubscriptionPage = () => {
 </header>
 
 {/* 👇 Push content below the header */}
-{/* <div className="pt-10 px-4 text-center">
-  <h2 className="text-4xl font-bold text-white">Choose Your Plan</h2>
-  <p className="text-white/90 mt-2">Flexible Pricing for all kinds of sellers</p>
-</div> */}
+<div className="pt-10 px-4 text-center">
+  <h2 className="text-4xl font-bold text-white"></h2>
+  <p className="text-white/90 mt-2"></p>
+</div>
 
 
       {/* Title & Toggle */}
-      <div className="text-center py-10 px-4">
+      <div className=" text-center py-10 px-4">
         <h2 className="text-4xl font-bold text-gray-800">Choose Your Plan</h2>
         <p className="text-gray-600 mt-2 font-extralarge">Flexible Pricing for all Users</p>
 
@@ -91,7 +91,7 @@ const SubscriptionPage = () => {
 
               {/* Selected Check Icon */}
               {isSelected && (
-                <CheckCircle className="absolute top-4 left-4 text-blue-600 w-6 h-6" />
+                <CheckCircle className="absolute top-13 right-5 text-white-600 w-6 h-6" />
               )}
 
               {/* Plan Info */}
