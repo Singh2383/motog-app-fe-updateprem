@@ -109,7 +109,7 @@ const RegisterContent: React.FC = () => {
             </form>
           </CardContent>
           <CardFooter className="flex-col gap-4">
-  <div className="flex items-start gap-2 text-sm text-neutral-700">
+  {/* <div className="flex items-start gap-2 text-sm text-neutral-700">
     <input
       type="checkbox"
       id="terms"
@@ -123,7 +123,7 @@ const RegisterContent: React.FC = () => {
       <Link href="/docs/privacy-policy.pdf" className="underline" target="_blank">Privacy Policy</Link>, and{" "}
       <Link href="/docs/refund-policy.pdf" className="underline" target="_blank">Refund Policy</Link> of MotoG.
     </label>
-  </div>
+  </div> */}
   </CardFooter>
 
           {
