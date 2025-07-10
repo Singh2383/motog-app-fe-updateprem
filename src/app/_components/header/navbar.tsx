@@ -31,6 +31,9 @@ const Navbar: FC<{ isMenuOpen: boolean, setMenuOpen: Dispatch<SetStateAction<boo
                         <Button variant="link" className={cn("justify-start md:justify-center text-sm font-medium", path === "/buy" && "underline")}>
                             <Link href={"/inventory"}>BUY CAR</Link>
                         </Button>
+                        <Button variant="link" className={cn("justify-start md:justify-center text-sm font-medium", path === "/subscription" && "underline")}>
+                            <Link href={"/subscription"}>PRICING</Link>
+                        </Button>
                         <Button variant="link" className={cn("justify-start md:justify-center text-sm font-medium", path === "/about-us" && "underline")}>
                             <Link href={"/about-us"} className=''>ABOUT US</Link>
                         </Button>
