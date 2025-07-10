@@ -35,55 +35,27 @@ const buttonVariants = cva(
   }
 )
 
+
+// Parent Code
 function Button({
   className,
   variant,
   size,
   asChild = false,
-  loading = false, // ✅ new prop
-  children,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
-    asChild?: boolean;
-    loading?: boolean; // ✅ add this
+    asChild?: boolean
   }) {
-  const Comp = asChild ? Slot : "button";
+  const Comp = asChild ? Slot : "button"
 
   return (
     <Comp
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
-      disabled={loading || props.disabled} // ✅ disable when loading
       {...props}
-    >
-      {loading && (
-        <span className="animate-spin rounded-full border-2 border-t-transparent border-white w-4 h-4 mr-2" />
-      )}
-      {children}
-    </Comp>
-  );
+    />
+  )
 }
-// Parent Code
-// function Button({
-//   className,
-//   variant,
-//   size,
-//   asChild = false,
-//   ...props
-// }: React.ComponentProps<"button"> &
-//   VariantProps<typeof buttonVariants> & {
-//     asChild?: boolean
-//   }) {
-//   const Comp = asChild ? Slot : "button"
-
-//   return (
-//     <Comp
-//       data-slot="button"
-//       className={cn(buttonVariants({ variant, size, className }))}
-//       {...props}
-//     />
-//   )
-// }
 
 export { Button, buttonVariants }
