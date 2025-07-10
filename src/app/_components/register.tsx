@@ -109,6 +109,7 @@ const RegisterContent: React.FC = () => {
             </form>
           </CardContent>
           <CardFooter className="flex-col gap-4">
+            {/* commented for doubling */}
   {/* <div className="flex items-start gap-2 text-sm text-neutral-700">
     <input
       type="checkbox"
