@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useListingForms } from "@/hooks/use-listing-forms";
 import { cn } from "@/lib/utils";
 import { Label } from "@radix-ui/react-label";
-import { startTransition, useState } from "react";
+import { useState } from "react";
 import { FieldErrors, UseFormRegister, UseFormSetValue } from "react-hook-form";
 import { AxiosError } from "axios";
 import { IoCloseCircleOutline } from "react-icons/io5";
