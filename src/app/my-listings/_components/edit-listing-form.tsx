@@ -135,7 +135,7 @@ export default function EditListingForm({ listing }: { listing: CarDto }) {
 
     return (
         <div className="">
-            <form onSubmit={handleSubmit} className="space-y-4 bg-gray-50 p-4 rounded-md mt-6 scroll-auto overflow-scroll">
+            <form onSubmit={handleSubmit} className="space-y-4 bg-gray-50 p-4 rounded-md my-12 scroll-auto overflow-scroll">
                 {/* <Input name="reg_no" value={formData.reg_no} onChange={handleChange} placeholder="RC Number" disabled />
                 <Input name="vehicle_type" value={formData.vehicle_type} onChange={handleChange} placeholder="Vehicle Type" disabled />
                 <Input name="kilometers_driven" type="number" value={formData.kilometers_driven} onChange={handleChange} placeholder="Kilometers Driven" />
