@@ -84,7 +84,8 @@ const RegisterContent: React.FC = () => {
             </CardAction>
           </CardHeader>
           <CardContent>
-            <form>
+            <form onSubmit={handleSubmit}> 
+              {/* recent change */}
               <div className="flex flex-col gap-6">
                 <div className="grid gap-2">
                   <Label htmlFor="email">Email</Label>
