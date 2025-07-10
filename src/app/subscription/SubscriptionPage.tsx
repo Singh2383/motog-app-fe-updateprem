@@ -47,10 +47,10 @@ const SubscriptionPage = () => {
 </header>
 
 {/* 👇 Push content below the header */}
-<div className="pt-10 px-4 text-center">
+{/* <div className="pt-10 px-4 text-center">
   <h2 className="text-4xl font-bold text-white">Choose Your Plan</h2>
   <p className="text-white/90 mt-2">Flexible Pricing for all kinds of sellers</p>
-</div>
+</div> */}
 
 
       {/* Title & Toggle */}
