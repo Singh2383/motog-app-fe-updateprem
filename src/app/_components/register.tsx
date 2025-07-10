@@ -143,18 +143,7 @@ const RegisterContent: React.FC = () => {
       <Link href="/docs/refund-policy.pdf" className="underline" target="_blank">Refund Policy</Link> of MotoG.
     </label>
   </div>
-  </CardFooter>/* <CardFooter className="flex-col gap-2">
-            <Button type="submit" className="w-full" onClick={handleSubmit}>
-              Register
-            </Button>
-            <p className='text-xs text-neutral-600'>
-              By proceeding, I confirm that I have received, read, and agree to:{" "}
-              <Link href='/docs/about-us.pdf' className='underline' target='_blank'>About Us</Link>,{" "}
-              <Link href='/docs/privacy-policy.pdf' className='underline' target='_blank'>Privacy Policy</Link>,{" "}
-              <Link href='/docs/refund-policy.pdf' className='underline' target='_blank'>Refund Policy</Link>, and{" "}
-              <Link href='/docs/terms-of-use.pdf' className='underline' target='_blank'>Terms of Use</Link>.
-            </p>
-          </CardFooter> */}
+  </CardFooter>}
         </Card>
       </div>
     </div>
