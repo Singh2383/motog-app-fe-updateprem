@@ -8,20 +8,20 @@ const plans = [
     name: 'FREE',
     monthly: 0,
     yearly: 0,
-    features: ['3 Listing per Year', 'Lifetime Validity', 'Customer Service Support', 'No Promotion Credit'],
+    features: ['1 Listing per Month', 'Lifetime Validity', 'Customer Service Support', 'No Promotion Credit'],
     popular: false,
   },
   {
     name: 'Dealer',
-    monthly: 199,
-    yearly: 2388,
-    features: ['30 Listing per Year', 'Lifetime Validity', 'Customer Service Support', 'No Promotion Credit'],
+    monthly: 299,
+    yearly: 3500,
+    features: ['20 Listing per Month', 'Lifetime Validity', 'Customer Service Support', 'No Promotion Credit'],
     popular: true,
   },
   {
     name: 'Dealer Plus',
-    monthly: 699,
-    yearly: 8388,
+    monthly: 899,
+    yearly: 10599,
     features: ['Unlimited Listings', 'Lifetime Validity', 'Featured Listings', 'Phone Support'],
     popular: false,
   },
@@ -156,15 +156,15 @@ const SubscriptionPage = () => {
             {plans.map((plan) => {
               let value = '—'
               if (feature === 'Car Listings') {
-                value = plan.name === 'FREE' ? ' 3 Listing / Year' : plan.name === 'Pro' ? '5' : 'Unlimited'
+                value = plan.name === 'FREE' ? ' 1 Listing / Month' : plan.name === 'Dealer' ? '20' : 'Unlimited'
               } else if (feature === 'Validity') {
-                value = plan.name === 'Basic' ? '3 Days' : plan.name === 'Pro' ? '15 Days' : '30 Days'
-              } else if (feature === 'Ad Free Experience') {
-                value = plan.name === 'Basic' ? 'No' : '✓'
+                value = plan.name === 'FREE' ? 'Lifetime' : plan.name === 'Dealer' ? 'Lifetime' : 'Lifetime'
+              } else if (feature === 'Promotion Credit') {
+                value = plan.name === 'FREE' ? 'No' : plan.name === 'Dealer'? 'No': '1 Week Credit'
               } else if (feature === 'Support Type') {
-                value = plan.name === 'Basic' ? 'Email' : plan.name === 'Pro' ? 'Priority' : 'Phone'
+                value = plan.name === 'FREE' ? 'Email' : plan.name === 'Dealer' ? 'Priority' : 'Phone'
               } else if (feature === 'Featured Listing') {
-                value = plan.name === 'Premium' ? '✓' : '—'
+                value = plan.name === 'Dealer Plus' ? '✓' : '—'
               }
 
               return (
